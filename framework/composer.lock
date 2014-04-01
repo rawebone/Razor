@@ -1,0 +1,159 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+    ],
+    "hash": "d4645681ee98b807f9b169ba98eff7b0",
+    "packages": [
+        {
+            "name": "psr/log",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/fe0936ee26643249e916849d48e3a51d5f5e278b",
+                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Psr\\Log\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "time": "2012-12-21 11:40:51"
+        },
+        {
+            "name": "rawebone/injector",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rawebone/Injector.git",
+                "reference": "8e1907bc03a41274e41fe5f232102af6b4ccd2ac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rawebone/Injector/zipball/8e1907bc03a41274e41fe5f232102af6b4ccd2ac",
+                "reference": "8e1907bc03a41274e41fe5f232102af6b4ccd2ac",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpspec/phpspec": "2.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Rawebone\\Injector\\": [
+                        "library/"
+                    ],
+                    "": [
+                        "spec/"
+                    ]
+                },
+                "files": [
+                    "library/Rawebone/Injector/singleton.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nick Rawe",
+                    "email": "rawebone@gmail.com"
+                }
+            ],
+            "description": "A library providing a low level service injection API",
+            "time": "2014-04-01 17:21:38"
+        },
+        {
+            "name": "symfony/http-foundation",
+            "version": "v2.4.2",
+            "target-dir": "Symfony/Component/HttpFoundation",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/HttpFoundation.git",
+                "reference": "cdee7c84ba8b2a8aafa1c055f5cb4f640d81c129"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/cdee7c84ba8b2a8aafa1c055f5cb4f640d81c129",
+                "reference": "cdee7c84ba8b2a8aafa1c055f5cb4f640d81c129",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\HttpFoundation\\": ""
+                },
+                "classmap": [
+                    "Symfony/Component/HttpFoundation/Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony HttpFoundation Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-02-11 15:39:28"
+        }
+    ],
+    "packages-dev": [
+
+    ],
+    "aliases": [
+
+    ],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "rawebone/injector": 20
+    },
+    "platform": [
+
+    ],
+    "platform-dev": [
+
+    ]
+}

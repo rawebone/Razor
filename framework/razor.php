@@ -21,7 +21,7 @@ $boot = function ()
 
     $http = new HttpDispatcher(injector(), $resolver);
 
-    // Installs itself globally via an internal global
+    // Initialise the application and push it onto the DSL Layer
     DSLAccessor::init(new Application($http));
 
     // Define our core services

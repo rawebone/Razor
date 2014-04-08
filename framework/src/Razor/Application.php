@@ -4,16 +4,15 @@ namespace Razor;
 
 class Application
 {
-    protected static $instance;
-
     /**
      * @var \Razor\Controller[]
      */
     protected $controllers = array();
+    protected $http;
 
-    public function __construct()
+    public function __construct(HttpDispatcher $http)
     {
-        self::$instance = $this;
+        $this->http = $http;
     }
 
     public function controller($name)
@@ -26,16 +25,8 @@ class Application
         return $ctls[$name];
     }
 
-    /**
-     * Provides access to the application via a static interface
-     * to enable syntactic sugar via the DSL.
-     *
-     * @param string $name
-     * @param array $arguments
-     * @return mixed
-     */
-    public static function __callStatic($name, $arguments)
+    public function run($controller)
     {
-        return call_user_func_array(array(self::$instance, $name), $arguments);
+        $this->http->dispatch($this->controller($controller));
     }
 }

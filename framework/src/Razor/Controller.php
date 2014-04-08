@@ -5,14 +5,14 @@ namespace Razor;
 /**
  * Represents the HTTP Handling defined by a Controller file.
  *
- * @property \Closure get
- * @property \Closure post
- * @property \Closure delete
- * @property \Closure patch
- * @property \Closure put
- * @property \Closure link
- * @property \Closure head
- * @property \Closure options
+ * @property \Closure|null get
+ * @property \Closure|null post
+ * @property \Closure|null delete
+ * @property \Closure|null patch
+ * @property \Closure|null put
+ * @property \Closure|null link
+ * @property \Closure|null head
+ * @property \Closure|null options
  * @property \Closure error
  * @property \Closure notFound
  */
@@ -30,7 +30,7 @@ class Controller
         $this->notFound = function () { };
 
         foreach (array("get", "post", "delete", "put", "patch", "link", "head", "options") as $method) {
-            $this->verbs[$method] = function () { };
+            $this->verbs[$method] = null;
         }
     }
 
@@ -59,7 +59,7 @@ class Controller
             return $this->error;
         } else if ($name === "notFound") {
             return $this->notFound;
-        } else if (isset($this->verbs[$name])) {
+        } else if (array_key_exists($name, $this->verbs)) {
             return $this->verbs[$name];
         } else if ($name === "name") {
             return $this->name;

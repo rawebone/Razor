@@ -2,7 +2,7 @@
 
 namespace Razor;
 
-class Dsl
+class DSLAccessor
 {
     protected static $instance;
 
@@ -21,6 +21,10 @@ class Dsl
      */
     public static function __callStatic($name, $arguments)
     {
+        if (!self::$instance instanceof Application) {
+            throw new FrameworkException("Configuration Error - DSL is not activated");
+        }
+
         return call_user_func_array(array(self::$instance, $name), $arguments);
     }
 }

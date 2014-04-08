@@ -5,25 +5,29 @@
  */
 
 require_once __DIR__ . "/vendor/autoload.php";
-require_once __DIR__ . "razor.php/"
+require_once __DIR__ . "/src/dsl.php";
 
+use Razor\DSLAccessor;
 use Razor\Application;
 use Razor\ServiceResolver;
 use Razor\HttpDispatcher;
-use Razor\TestRecorder;
-use Razor\HttpTester;
-
+use Symfony\Component\HttpFoundation\Request;
 
 $boot = function ()
 {
+    // Isolate instances from the global scope
     $resolver = new ServiceResolver();
     injector()->resolver($resolver);
 
     $http = new HttpDispatcher(injector(), $resolver);
-    $tester = new HttpTester(injector(), $resolver, new TestRecorder());
 
     // Installs itself globally via an internal global
-    new Application(injector(), $resolver);
+    DSLAccessor::init(new Application($http));
+
+    // Define our core services
+    $resolver->registerService("request", function () { return Request::createFromGlobals(); });
 };
 
 $boot();
+unset($boot);
+

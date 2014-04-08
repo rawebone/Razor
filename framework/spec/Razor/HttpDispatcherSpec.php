@@ -65,4 +65,20 @@ class HttpDispatcherSpec extends ObjectBehavior
 
         $this->dispatch($controller);
     }
+
+    function it_should_not_propagate_http_abort_exceptions(Injector $injector, ServiceResolver $resolver, Request $request)
+    {
+        $injector->service("request")->willReturn($request);
+        $request->getMethod()->willReturn("GET");
+
+        $controller = new Controller("test");
+        $controller->get = function () { };
+
+        $injector->inject($controller->get)->willThrow('Razor\HttpAbortException');
+
+        $resolver->lock()->willReturn(1);
+        $resolver->unlock(1)->shouldBeCalled();
+
+        $this->dispatch($controller);
+    }
 }

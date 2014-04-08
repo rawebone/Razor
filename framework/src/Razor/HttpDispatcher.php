@@ -35,6 +35,9 @@ class HttpDispatcher
                 $this->injector->inject($controller->notFound);
             }
 
+        } catch (HttpAbortException $ex) {
+            // Response has been sent already - let the framework clean up
+
         } catch (\Exception $ex) {
 
             // Allow the error handler to access the raised exception as a service

@@ -151,3 +151,66 @@ need to build our applications using this structure.
 
 ```
 
+
+## The Application Bootstrap
+
+As you develop your application you'll find that you want to use libraries,
+define classes and make sure you're application can run properly. For this
+we have the `application/bootstrap.php` file which is called automatically
+when we load the framework.
+
+
+## Defining Services
+
+Services are at the core of the framework as they allow us to lazily load
+components of the application and pass them around with ease. For example,
+if you want to share an object which contains credentials for a database
+as a service, we would put the following into our `application/bootstrap.php`
+file:
+
+```php
+<?php
+
+// File: application/bootstrap.php
+
+services(array(
+    "credentials" => function () { return (object)array("user" => "mike", "pass" => "beta");  }
+));
+
+```
+
+In our controllers, we can now access this service in the same way as shown in
+the Quick Start:
+
+```php
+<?php
+
+// File: public/db-controller.php
+
+require_once(__DIR__ . "/../framework/razor.php");
+
+get(function ($credentials)
+{
+
+});
+
+run();
+
+```
+
+More importantly, services can consume _other_ services:
+
+```php
+<?php
+
+// File: application/bootstrap.php
+
+services(array(
+    "credentials" => function () { return (object)array("user" => "mike", "pass" => "beta");  },
+    "connection" => function ($credentials) { return new DbConnection($credentials->user, $credentials->pass); }
+));
+
+```
+
+This is an incredibly powerful feature of the framework which allows you to
+expose and compose services in your application with ease.

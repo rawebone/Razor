@@ -4,8 +4,9 @@
  * Razor Framework Bootstrap
  */
 
-require_once __DIR__ . "/vendor/autoload.php";
-require_once __DIR__ . "/src/dsl.php";
+require_once(__DIR__ . "/vendor/autoload.php");
+require_once(__DIR__ . "/src/dsl.php");
+require_once(__DIR__ . "/../application/bootstrap.php");
 
 use Razor\Response;
 use Razor\DSLAccessor;

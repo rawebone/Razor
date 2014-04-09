@@ -9,10 +9,12 @@ class Application
      */
     protected $controllers = array();
     protected $http;
+    protected $resolver;
 
-    public function __construct(HttpDispatcher $http)
+    public function __construct(HttpDispatcher $http, ServiceResolver $resolver)
     {
         $this->http = $http;
+        $this->resolver = $resolver;
     }
 
     public function controller($name)
@@ -28,5 +30,10 @@ class Application
     public function run($controller)
     {
         $this->http->dispatch($this->controller($controller));
+    }
+
+    public function service($name, $factory)
+    {
+        $this->resolver->registerService($name, $factory);
     }
 }

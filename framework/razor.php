@@ -26,7 +26,7 @@ $boot = function ()
     $http = new HttpDispatcher(injector(), $resolver);
 
     // Initialise the application and push it onto the DSL Layer
-    DSLAccessor::init(new Application($http));
+    DSLAccessor::init(new Application($http, $resolver));
 
     // Define our core services
     $resolver->registerService("request", function () { return Request::createFromGlobals(); });

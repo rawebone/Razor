@@ -149,3 +149,14 @@ function run()
     Razor::run($controller);
 }
 
+/**
+ * Registers services with the framework.
+ *
+ * @param array $factories
+ */
+function services(array $factories)
+{
+    foreach ($factories as $name => $factory) {
+        Razor::service($name, $factory);
+    }
+}

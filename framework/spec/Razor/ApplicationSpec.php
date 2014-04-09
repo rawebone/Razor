@@ -5,12 +5,13 @@ namespace spec\Razor;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Razor\HttpDispatcher;
+use Razor\ServiceResolver;
 
 class ApplicationSpec extends ObjectBehavior
 {
-    function let(HttpDispatcher $http)
+    function let(HttpDispatcher $http, ServiceResolver $resolver)
     {
-        $this->beConstructedWith($http);
+        $this->beConstructedWith($http, $resolver);
     }
 
     function it_is_initializable()
@@ -30,5 +31,12 @@ class ApplicationSpec extends ObjectBehavior
              ->shouldBeCalled();
 
         $this->run("name");
+    }
+
+    function it_should_register_a_service(ServiceResolver $resolver)
+    {
+        $func = function () { };
+        $resolver->registerService("name", $func)->shouldBeCalled();
+        $this->service("name", $func);
     }
 }

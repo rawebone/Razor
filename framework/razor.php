@@ -12,9 +12,12 @@ use Razor\Application;
 use Razor\ServiceResolver;
 use Razor\HttpDispatcher;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Debug\Debug;
 
 $boot = function ()
 {
+    Debug::enable();
+
     // Isolate instances from the global scope
     $resolver = new ServiceResolver();
     injector()->resolver($resolver);

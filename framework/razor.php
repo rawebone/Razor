@@ -7,6 +7,7 @@
 require_once __DIR__ . "/vendor/autoload.php";
 require_once __DIR__ . "/src/dsl.php";
 
+use Razor\Response;
 use Razor\DSLAccessor;
 use Razor\Application;
 use Razor\ServiceResolver;
@@ -29,6 +30,7 @@ $boot = function ()
 
     // Define our core services
     $resolver->registerService("request", function () { return Request::createFromGlobals(); });
+    $resolver->registerService("response", function () { return new Response(); });
 };
 
 $boot();

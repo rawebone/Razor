@@ -2,7 +2,7 @@
 
 Razor is a minimalist web application framework which provides a bridge
 between "classic" and "modern" PHP. Its goal is to make developing
-applications simple and to enable testable and easy maintenance. The system
+applications simple and to enable testing and easy maintenance. The system
 is opinionated about your development workflow and provides a structure
 for working in.
 
@@ -10,10 +10,10 @@ for working in.
 ## Quick Start
 
 To get going with the framework quickly, open the `public/index.php` file. In
-Razor this is referred to as a **Controller** and contains handlers for taking
-action against particular **HTTP Verbs**. For example when we request the index
-page of the website, to handle a GET request and send out the obligatory "Hello,
-World!" response we would write:
+Razor this is referred to as a **Controller** and it contains **Handlers** for
+taking action against particular **HTTP Verbs**. For example when we request
+the index page of the website, to handle a `GET` request and send out the
+obligatory "Hello, World!" response we would write:
 
 ```php
 <?php
@@ -33,13 +33,15 @@ run();
 
 Any other HTTP requests (like a `POST` request) will respond as a `400 Bad Request`
 because we do not have a handler for them and as such these requests are invalid.
+The `get()` and `run()` functions are provided by the framework to make it easy
+to work with these HTTP Verbs and all handlers in the controller are defined using
+**Closures**, one of the nicer features of PHP5.3+.
 
 Say our requirements change and we need to output the name of the user who has
-made the request. The framework provides a mechanism called **Service Injection**
-which allows us to pass through objects identified by a name; this allows us to
-_de-couple the handlers from their dependencies and keeps the Controllers clean
-and concise_. The framework provides a default service which can be used for
-accessing request data safely:
+made the request. Razor provides a small number of API's called **Services**,
+one of which allows us to safely access information about the request. We can
+use this service by declaring it as a parameter of our handler:
+
 
 ```php
 <?php
@@ -58,9 +60,20 @@ run();
 ```
 
 So now, if we hit the Index Controller as `index.php?name=Bob` we can see
-`Hello, Bob!` and if we just hit `index.php` we get `Hello, World!`. In
-addition to the request service we also have a response service which makes
-it easier to send data back to the client:
+`Hello, Bob!` and if we just hit `index.php` we get `Hello, World!`. The
+services system is made possible by a technique called **Dependency Injection**
+which allows us to pass through objects based upon a name. When Razor finds
+a handler which matches the current HTTP verb, it quickly reads the handlers
+signature to determine what services it needs and _injects_ them when it
+is invoked. In this case the framework sees that the `request` service is
+required and passes it through.
+
+Working in this way allows us to _de-couple the handlers from their dependencies_
+and keeps the controllers clean and concise. We define and consume the services
+for our application in exactly the same way as will be described later on.
+
+In addition to the `request` service we also have a `response` service for
+sending information back to the client:
 
 ```php
 <?php
@@ -79,9 +92,14 @@ run();
 
 ```
 
-This response object allows us to work with headers in a more general way than
-is possible with native PHP; in addition we can use it to handle particular
-types of data responses, for example JSON:
+This `response` object is an abstraction over the native PHP header and
+output handling which makes it easier to send HTTP Responses back to the
+client. Here we are sending a `200 Okay` response to the client with the
+content of `Hello, World!`. This response object is particularly helpful
+when dealing with more complex output, like JSON, where we need to send
+particular headers so that clients can read the data effectively.
+
+For example, JSON can be returned by:
 
 ```php
 <?php
@@ -105,9 +123,10 @@ run();
 
 ```
 
-All of the headers and encoding process can be deferred and best practices
-(such as ensuring all data going into the output JSON is UTF-8 encoded first)
-can be applied without us having to do the work manually each time.
+All of the headers, encoding process and best practices (such as ensuring all
+data going into the output JSON is UTF-8 encoded first) can be applied without
+us having to do the work manually each time, which makes our application more
+secure.
 
 
 ## Folder Structure

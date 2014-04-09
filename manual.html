@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" />
+        <link rel="stylesheet" href="http://yandex.st/highlightjs/8.0/styles/default.min.css">
+        
+        <style>
+            h2 {
+                border-bottom: 1px grey solid;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>Razor Framework</h1>
+
+<p>Razor is a minimalist web application framework which provides a bridge
+between "classic" and "modern" PHP. Its goal is to make developing
+applications simple and to enable testable and easy maintenance. The system
+is opinionated about your development workflow and provides a structure
+for working in.</p>
+
+<h2>Quick Start</h2>
+
+<p>To get going with the framework quickly, open the <code>public/index.php</code> file. In
+Razor this is referred to as a <strong>Controller</strong> and contains handlers for taking
+action against particular <strong>HTTP Verbs</strong>. For example when we request the index
+page of the website, to handle a GET request and send out the obligatory "Hello,
+World!" response we would write:</p>
+
+<pre><code class="php">&lt;?php
+
+// File: public/index.php
+
+require_once(__DIR__ . "/../framework/razor.php");
+
+get(function ()
+{
+    echo "Hello, World!";
+});
+
+run();
+
+</code></pre>
+
+<p>Any other HTTP requests (like a <code>POST</code> request) will respond as a <code>400 Bad Request</code>
+because we do not have a handler for them and as such these requests are invalid.</p>
+
+<p>Say our requirements change and we need to output the name of the user who has
+made the request. The framework provides a mechanism called <strong>Service Injection</strong>
+which allows us to pass through objects identified by a name; this allows us to
+<em>de-couple the handlers from their dependencies and keeps the Controllers clean
+and concise</em>. The framework provides a default service which can be used for
+accessing request data safely:</p>
+
+<pre><code class="php">&lt;?php
+
+// File: public/index.php
+
+require_once(__DIR__ . "/../framework/razor.php");
+
+get(function ($request)
+{
+    printf("Hello, %s!", $request-&gt;get("name", "World"));
+});
+
+run();
+
+</code></pre>
+
+<p>So now, if we hit the Index Controller as <code>index.php?name=Bob</code> we can see
+<code>Hello, Bob!</code> and if we just hit <code>index.php</code> we get <code>Hello, World!</code>. In
+addition to the request service we also have a response service which makes
+it easier to send data back to the client:</p>
+
+<pre><code class="php">&lt;?php
+
+// File: public/index.php
+
+require_once(__DIR__ . "/../framework/razor.php");
+
+get(function ($request, $response)
+{
+    $name = sprintf("Hello, %s!", $request-&gt;get("name", "World"));
+    $response-&gt;general($name)-&gt;send();
+});
+
+run();
+
+</code></pre>
+
+<p>This response object allows us to work with headers in a more general way than
+is possible with native PHP; in addition we can use it to handle particular
+types of data responses, for example JSON:</p>
+
+<pre><code class="php">&lt;?php
+
+// File: public/json-today.php
+
+require_once(__DIR__ . "/../framework/razor.php");
+
+get(function ($request, $response)
+{
+    $data = array(
+        "year"  =&gt; date("Y"),
+        "month" =&gt; date("m"),
+        "day"   =&gt; date("d")
+    );
+
+    $response-&gt;json($data)-&gt;send();
+});
+
+run();
+
+</code></pre>
+
+<p>All of the headers and encoding process can be deferred and best practices
+(such as ensuring all data going into the output JSON is UTF-8 encoded first)
+can be applied without us having to do the work manually each time.</p>
+
+<h2>Folder Structure</h2>
+
+<p>As outlined at the top of this document, Razor is an opinionated framework.
+That means that it provides a folder structure to work with which needs to
+be conformed to. Later versions of the framework will implement something
+that will require this opinion, and this will be awesome, but for now we
+need to build our applications using this structure.</p>
+
+<pre><code><br />/application                &lt;-- Where you're application is configured
+    /resources              &lt;-- Template files, site assets etc
+    /src                    &lt;-- Custom classes/libraries your application requires
+    /tests                  &lt;-- The tests for your application
+
+/framework                  &lt;-- The Razor Framework
+
+/public                     &lt;-- Controllers, anything that needs to be publicly accessible
+
+</code></pre>
+        </div>
+        
+        <script type="text/javascript" src="http://yandex.st/highlightjs/8.0/highlight.min.js"></script>
+        <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>

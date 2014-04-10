@@ -14,7 +14,8 @@
         "rawebone/injector": "dev-master",
         "symfony/http-foundation": "2.4.*",
         "symfony/debug": "2.4.*",
-        "phpspec/prophecy": "1.*"
+        "phpspec/prophecy": "1.*",
+        "psr/log": "1.*"
     },
     "require-dev": {
         "phpspec/phpspec": "2.*"

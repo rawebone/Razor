@@ -7,7 +7,7 @@ is opinionated about your development workflow and provides a structure
 for working in.
 
 
-## Quick Start
+## Concepts
 
 To get going with the framework quickly, open the `public/index.php` file. In
 Razor this is referred to as a **Controller** and it contains **Handlers** for
@@ -174,7 +174,10 @@ file:
 // File: application/bootstrap.php
 
 services(array(
-    "credentials" => function () { return (object)array("user" => "mike", "pass" => "beta");  }
+    "credentials" => function ()
+    {
+        return (object)array("user" => "mike", "pass" => "beta");
+    }
 ));
 
 ```
@@ -206,8 +209,15 @@ More importantly, services can consume _other_ services:
 // File: application/bootstrap.php
 
 services(array(
-    "credentials" => function () { return (object)array("user" => "mike", "pass" => "beta");  },
-    "connection" => function ($credentials) { return new DbConnection($credentials->user, $credentials->pass); }
+    "credentials" => function ()
+    {
+        return (object)array("user" => "mike", "pass" => "beta");
+    },
+
+    "connection" => function ($credentials)
+    {
+        return new DbConnection($credentials->user, $credentials->pass);
+    }
 ));
 
 ```

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css" />
+        <link rel="stylesheet" href="http://yandex.st/highlightjs/8.0/styles/default.min.css">
+        
+        <style>
+            h2 {
+                border-bottom: 1px grey solid;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>Razor Framework</h1>
+
+<p>Razor is a minimalist web application framework which provides a bridge
+between "classic" and "modern" PHP development techniques. Its goal is to help
+its users to create simple, testable, maintainable applications that conform to
+modern PHP techniques and standards. These techniques, such as test driven design
+and dependency injection, help to build in quality but often require complex
+architectures as a result. Razor tries to simplify this into a pragmatic solution
+while retaining the benefits.</p>
+
+<p>This document covers the basic concepts of Razor, explaining where they have come
+from, and how they benefit your development cycle; this is summarised by an
+example application walk-through.</p>
+
+<h2>Concepts</h2>
+
+<ul>
+<li>To Do: What we mean by concepts</li>
+</ul>
+
+<h3>HTTP and Handlers</h3>
+
+<p>HTTP can be summarised as thus: an <strong>Agent</strong> (such as a web browser) makes a
+<strong>Request</strong> to a web server, and the server returns a <strong>Response</strong>. The type of
+request made varies with the requirements of the application but the most
+common is the <code>GET</code> request, where the agent requests the data of a resource.
+An example of a <code>GET</code> request and response can be seen by opening your web
+browser and navigating to <code>www.google.co.uk</code>.</p>
+
+<p>When we design a web application, the web server delegates the processing
+of the request and the response to our scripts whose job is to interpret
+the information sent by the agent and provide the appropriate data; Razor
+provides a structure for this interpretation via a mechanism called a
+<strong>Handler</strong>. For example, if we have an application hosted at the URL
+<code>www.example.com/index.php</code>, and we want to handle <code>GET</code> requests then our
+ index.php file would look like:</p>
+
+<pre><code class="php">&lt;?php
+
+// File: public/index.php
+
+require_once(__DIR__ . "/../framework/razor.php");
+
+get(function () 
+{
+    // Do something
+});
+
+run();
+</code></pre>
+
+<p>The first step we take is to load the framework (<code>require_once(__DIR__ . "/../framework/razor.php")</code>)
+which provides us with the <code>get()</code> and <code>run()</code> functions. Then we call the <code>get()</code>
+function and pass it our <strong>Handler</strong> - which is an anonymous function, or
+<strong>Closure</strong> - which will be invoked when a <code>GET</code> HTTP request is made to the
+index file. Lastly we call the <code>run()</code> function which tells the framework to
+match the request to and invoke a handler.</p>
+
+<p>So to recap we load the Razor framework, pass in our logic to be handled when
+a <code>GET</code> request occurs and finally we run the application. It is also possible
+to use multiple handlers within the same file to achieve your desired functionality,
+below is a example of a file that handles both a <code>GET</code> and <code>POST</code> requests:</p>
+
+<pre><code class="php">&lt;?php
+
+// File: public/index.php
+
+require_once(__DIR__ . "/../framework/razor.php");
+
+get(function () 
+{
+    // Display form
+});
+
+post(function () 
+{
+    // Do something with form data
+});
+
+run();
+</code></pre>
+
+<p>We can setup handlers using the mechanism described above for the following
+HTTP request types:</p>
+
+<ul>
+<li><code>get</code></li>
+<li><code>post</code></li>
+<li><code>head</code></li>
+<li><code>options</code></li>
+<li><code>delete</code></li>
+<li><code>put</code></li>
+<li><code>patch</code></li>
+</ul>
+
+<h3>Services</h3>
+
+<p>One of the biggest challenges in application is managing changes; today
+our database is a MySQL server, tomorrow it might be an MSSQL backend. Our
+applications have to be tolerant of change so that we can expedite fixes
+and new functionality to our users. In applications that follow the more
+classic PHP approach, we would start adding conditions to our code -
+potentially in multiple places in the app - to meet these new requirements,
+lowering the concision of the code and increasing the potential for problems
+such as changes not being made in multiple places.</p>
+
+<p>In addition, performant web applications are those which load the least
+amount of resources as possible to reduce disk hits/parse time to get the
+job done. In classic PHP this normally dictates that we have to spend the
+first twenty lines of code including and requiring files, making changes
+to API's more difficult. Alternatively developers try to reduce the
+amount of files present in the application which greatly reduces their
+ability to maintain it as it slowly descends into a spaghetti code monster.</p>
+
+<p>Finally, in classic PHP there's no good way to test the scripts to make
+sure they work because your application is totally live - your script
+creates object instances, loads files and such manually and so is too
+<em>tightly coupled</em> to it's environment to test via automation.</p>
+
+<p>All of these problems can be mitigated in Razor through a system called
+<strong>Services</strong>. The best way to show how this works is by example; say we
+setup our handler in <code>index.php</code> and we want to send out a greeting to
+the agent who sent the request:</p>
+
+<pre><code class="php">&lt;?php
+
+// File: public/index.php
+
+require_once(__DIR__ . "/../framework/razor.php");
+
+get(function ($response) 
+{
+    $response-&gt;general("Hello, World!")-&gt;send();
+});
+
+run();
+</code></pre>
+
+<p>As you can see, in our <code>GET</code> request handler we now have a parameter called
+<code>response</code> upon which we call the methods <code>general()</code> and <code>send()</code>. We are
+able to do this because of a technique called <strong>Dependency Injection</strong>; in
+this example, when the framework invokes the handler it first reads in its
+parameters and matches them to the <em>names of defined services</em>. It then
+<em>injects the required services</em> into the handler so that it can perform its
+task. We can say that we have <em>de-coupled the handler from its dependencies</em>.</p>
+
+<p>The framework itself provides the service called <code>response</code> used in this example
+but this functionality comes into it's own primarily because you can define
+your own services which can be injected through this same mechanism. For example:</p>
+
+<pre><code class="php">&lt;?php
+
+// File: application/bootstrap.php
+
+services(array(
+    "document" =&gt; function ()
+    {
+        return new XmlDocumentReader();
+    }
+));
+</code></pre>
+
+<p>Here we define a service called <code>document</code> which is assigned a closure. When
+the closure is invoked, an <code>XmlDocumentReader</code> object. Say we want to consume
+this service in our application:</p>
+
+<pre><code class="php">&lt;?php
+
+// File: public/document-reader.php
+
+require_once(__DIR__ . "/../framework/razor.php");
+
+get(function ($document)
+{
+    var_dump($document); // object "XmlDocumentReader"
+});
+
+run();
+</code></pre>
+
+<p>This may seem a little counter-intuitive at first, but let's take a more
+detailed look at what we have done here:</p>
+
+<ul>
+<li>We have defined a callback which return an object based upon it's name</li>
+<li>The object will not be created until it's needed meaning memory will not be
+used unnecessarily</li>
+<li>Until it is created, the file which contains the object will not be included
+and so redundant disk hits avoided</li>
+<li>If we want to test the functionality of the handler later on, we can swap out
+the service with a test dummy to validate behaviour</li>
+</ul>
+
+<p>In addition, we can more gracefully handle change. Say we decide that XML is too
+verbose and so we switch to using JSON documents, we can now create an object
+with the same interface as the <code>XmlDocumentReader</code> called <code>JsonDocumentReader</code>
+and make the change in our application by:</p>
+
+<pre><code class="php">&lt;?php
+
+// File: application/bootstrap.php
+
+services(array(
+    "document" =&gt; function ()
+    {
+        // return new XmlDocumentReader();
+        return new JsonDocumentReader();
+    }
+));
+</code></pre>
+
+<p>And so without and changes to our handler, we can change to using JSON documents.</p>
+
+<p>As you can see within our get logic we create a variable holding a simple hello world string and then call a method
+'send' on our response <strong>Service</strong> passing in the text we wish to send.</p>
+
+<ul>
+<li>To Do: List of services and what they do</li>
+</ul>
+
+<h3>Controllers</h3>
+
+<p>We have already used a <strong>Controller</strong> in the course of this document, lets take a look at the first example code demonstrated.</p>
+
+<pre><code class="php">&lt;?php
+
+// File: public/index.php
+
+require_once(__DIR__ . "/../framework/razor.php");
+
+get(function () 
+{
+    // Do something
+});
+
+run();
+</code></pre>
+
+<p>We have already covered the functionality in this example but note the comment on the 2nd line (File: <code>public/index.php</code>)
+this denotes the location of this file and as you can see this file exists inside a publicly accessible folder 'public'.</p>
+
+<p>This entire file is the <strong>Controller</strong> and is essentially a entry point into your razor application, as we have seen before we
+use <strong>Handlers</strong> to determine the logic we use with the type of browser request, but a <strong>Controller</strong> is used to hold these
+<strong>Handlers</strong> and denote the logic we execute based upon the location of the browser request.</p>
+
+<ul>
+<li>To Do: Could use more clarity</li>
+</ul>
+
+<p>So now we have <strong>Handlers</strong>, <strong>Controllers</strong> and Razor inbuilt <strong>services</strong> (more on custom <strong>Services</strong> later), so lets take a look
+at the folder structure as we currently know it (I have excluded folders we have yet to cover)</p>
+
+<pre><code><br />/framework                  &lt;-- The Razor Framework
+/public                     &lt;-- Controllers, anything that needs to be publicly accessible
+    /assets                 &lt;-- CSS Files, JavaScript Files, static images etc
+
+</code></pre>
+
+<p>Firstly we have the framework folder, this folder contains the Razor framework. Next we have the public folder, this folder and
+all its sub folders/files are publicly accessible, <strong>Controllers</strong> for your application reside within this folder.
+Finally I have included the assets folder, this folder is yours to store assets your application may need to publicly
+host (CSS files, JS files, images etc).</p>
+
+<p>We have only focused on the folders covered so far but it is important to understand and implement a structure to your application
+in a uniform way to help with maintenance and collaboration. We will extend the folder structure later to cover more of the workflow.</p>
+
+<h3>The Application BootStrap</h3>
+
+<p>As you develop your application you'll find that you want to define your own custom <strong>Services</strong>, for this we have the <code>application/bootstrap.php</code>
+file which is called automatically when we load the framework, first lets look at a empty bootstrap.</p>
+
+<pre><code class="php">&lt;?php
+
+// File: application/bootstrap.php
+
+services(array(
+
+));
+
+</code></pre>
+
+<p>As you can see the bootstrap calls a function called 'services' and passes a array, curently this array is blank however it is
+here we define our <strong>Services</strong>. All our <strong>Services</strong> use associative arrays and as such are defined in two parts, the first part is the
+name for this <strong>Service</strong> and the second part is a function to be executed when this <strong>Service</strong> is used (normally this function simply returns
+a object).</p>
+
+<p>Lets create a <strong>Service</strong> called "hello" to store a value of "Hello, World!".</p>
+
+<pre><code class="php">&lt;?php
+
+// File: application/bootstrap.php
+
+services(array(
+    "hello" =&gt; function ()
+    {
+        return (object)array("text" =&gt; "Hello, World!");
+    }
+));
+
+</code></pre>
+
+<p>Normally we would create this object as a <strong>Model</strong> outside of this file (more on this later) but for now we have directly created
+our object in the array, now we can use this <strong>Service</strong> in our <code>public/index.php</code> <strong>Controller</strong>.</p>
+
+<pre><code class="php">&lt;?php
+// File: public/index.php
+
+require_once(__DIR__ . "/../framework/razor.php");
+
+get(function ($response, $hello) 
+{
+    $response-&gt;general($hello-&gt;text)-&gt;send();
+});
+
+run();
+</code></pre>
+
+<p>As you can see by including "$hello" as a argument in our get request callback function Razor has automatically injected the hello
+<strong>Service</strong> into our callback ready for use.</p>
+
+<p>More importantly <strong>services</strong> can consume other <strong>services</strong> if we modify the <code>application/bootstrap.php</code> to.</p>
+
+<pre><code class="php">&lt;?php
+
+// File: application/bootstrap.php
+
+services(array(
+    "hello" =&gt; function ($world)
+    {
+        return (object)array("text" =&gt; "Hello" + $world-&gt;text);
+    }
+    "world" =&gt; function ()
+    {
+        return (object)array("text" =&gt; "World!");
+    }
+));
+
+</code></pre>
+
+<p>we have now split the "$hello" <strong>Service</strong> to multiple <strong>Services</strong> one referencing the other, this is an incredibly powerful feature
+of the framework which allows you to expose and compose <strong>Services</strong> in your application with ease and modify <strong>Services</strong> without having
+to modify references to these <strong>Services</strong> in your <strong>Controllers</strong>.</p>
+
+<p>Lets take another look at the folder structure as we know it.</p>
+
+<pre><code>/application                &lt;-- Where you're application is configured
+
+/framework                  &lt;-- The Razor Framework
+/public                     &lt;-- Controllers, anything that needs to be publicly accessible
+    /assets                 &lt;-- CSS Files, JavaScript Files, static images etc
+
+</code></pre>
+
+<p>Now we have a new folder "application" this folder is used to hold configurations for our application, currently we only know of one configuration
+<code>Bootstrap.php</code> however as you progress through this document you will learn of other configuration files.</p>
+
+<h3>Views</h3>
+
+<ul>
+<li>To Do: What are views</li>
+<li>To Do: How to use them</li>
+<li>To Do: Examples</li>
+<li>To Do: Folder Structure Part III</li>
+</ul>
+
+<h3>Models</h3>
+
+<ul>
+<li>To Do: What are models</li>
+<li>To Do: Why and how to use them</li>
+<li>To Do: Examples</li>
+<li>To Do: Folder Structure Part IV</li>
+</ul>
+
+<h3>Tests</h3>
+
+<ul>
+<li>To Do: What are tests</li>
+<li>To Do: Why and how we use them </li>
+<li>To Do: Examples</li>
+<li>To Do: Folder Structure Part V</li>
+</ul>
+
+<h1>WorkFlow</h1>
+
+<ul>
+<li>To Do: What is a WorkFlow</li>
+<li>To Do: Summary of the Razor WorkFlow (Steps)</li>
+</ul>
+
+<h2>Example Project</h2>
+
+<ul>
+<li>To Do: Summary of what we plan to achieve</li>
+<li>To Do: Summary of he example project</li>
+</ul>
+
+<h3>User Requirements</h3>
+
+<ul>
+<li>To Do: What we hope to achieve in this step</li>
+<li>To Do: Run through this step with our example Project</li>
+</ul>
+
+<h3>Functional Requirements</h3>
+
+<ul>
+<li>To Do: What you hope to achieve in this step</li>
+<li>To Do: Run through this step with our example Project</li>
+</ul>
+
+<h3>Project Structure</h3>
+
+<ul>
+<li>To Do: What we mean by structure</li>
+<li>To Do: Run through this step with our example Project</li>
+</ul>
+
+<h3>From test to functionality (Red, Green, Refactor)</h3>
+
+<ul>
+<li>To Do: What you hope to achieve in this step</li>
+<li>To Do: Run through part of the application with this step</li>
+</ul>
+        </div>
+        
+        <script type="text/javascript" src="http://yandex.st/highlightjs/8.0/highlight.min.js"></script>
+        <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>

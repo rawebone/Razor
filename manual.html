@@ -24,7 +24,7 @@ applications simple and to enable testing and easy maintenance. The system
 is opinionated about your development workflow and provides a structure
 for working in.</p>
 
-<h2>Quick Start</h2>
+<h2>Concepts</h2>
 
 <p>To get going with the framework quickly, open the <code>public/index.php</code> file. In
 Razor this is referred to as a <strong>Controller</strong> and it contains <strong>Handlers</strong> for
@@ -180,7 +180,10 @@ file:</p>
 // File: application/bootstrap.php
 
 services(array(
-    "credentials" =&gt; function () { return (object)array("user" =&gt; "mike", "pass" =&gt; "beta");  }
+    "credentials" =&gt; function ()
+    {
+        return (object)array("user" =&gt; "mike", "pass" =&gt; "beta");
+    }
 ));
 
 </code></pre>
@@ -210,8 +213,15 @@ run();
 // File: application/bootstrap.php
 
 services(array(
-    "credentials" =&gt; function () { return (object)array("user" =&gt; "mike", "pass" =&gt; "beta");  },
-    "connection" =&gt; function ($credentials) { return new DbConnection($credentials-&gt;user, $credentials-&gt;pass); }
+    "credentials" =&gt; function ()
+    {
+        return (object)array("user" =&gt; "mike", "pass" =&gt; "beta");
+    },
+
+    "connection" =&gt; function ($credentials)
+    {
+        return new DbConnection($credentials-&gt;user, $credentials-&gt;pass);
+    }
 ));
 
 </code></pre>

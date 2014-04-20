@@ -1,7 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: nrawe
- * Date: 08/04/14
- * Time: 14:33
- */ 
+
+require_once(__DIR__ . "/../framework/razor-test.php");
+
+
+
+

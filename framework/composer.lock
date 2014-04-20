@@ -3,8 +3,43 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "4ad0c3f04375317ecf65dfe9e627e711",
+    "hash": "0eb34373be9e968c9545e7000dc38df9",
     "packages": [
+        {
+            "name": "esperance/esperance",
+            "version": "v0.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/esperance/esperance.git",
+                "reference": "953ff4967c7cb427b102612d1ac2fde269b0e0d3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/esperance/esperance/zipball/953ff4967c7cb427b102612d1ac2fde269b0e0d3",
+                "reference": "953ff4967c7cb427b102612d1ac2fde269b0e0d3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Esperance": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "BDD style assertion library for PHP.",
+            "keywords": [
+                "BDD",
+                "TDD",
+                "assertion"
+            ],
+            "time": "2012-07-01 15:55:19"
+        },
         {
             "name": "phpspec/prophecy",
             "version": "1.1.2",
@@ -141,6 +176,52 @@
             ],
             "description": "A library providing a low level service injection API",
             "time": "2014-04-04 14:07:43"
+        },
+        {
+            "name": "rawebone/jasmini",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rawebone/Jasmini.git",
+                "reference": "38efae378f969a6a58585d5d3796fcf3741ee581"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rawebone/Jasmini/zipball/38efae378f969a6a58585d5d3796fcf3741ee581",
+                "reference": "38efae378f969a6a58585d5d3796fcf3741ee581",
+                "shasum": ""
+            },
+            "require": {
+                "esperance/esperance": "v0.0.3",
+                "phpspec/prophecy": "1.*",
+                "rawebone/injector": "dev-master"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "2.0.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "": [
+                        "spec/"
+                    ],
+                    "Rawebone\\Jasmini": [
+                        "library/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nick Rawe",
+                    "email": "rawebone@gmail.com"
+                }
+            ],
+            "description": "A small, Jasmine-esque testing framework",
+            "time": "2014-04-13 21:02:49"
         },
         {
             "name": "symfony/debug",
@@ -577,7 +658,8 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "rawebone/injector": 20
+        "rawebone/injector": 20,
+        "rawebone/jasmini": 20
     },
     "platform": [
 

@@ -18,6 +18,9 @@ use Razor\HttpDispatcher;
 use Razor\HtmlTestListener;
 use Razor\ResourceManager;
 use Razor\TemplateRenderer;
+use Razor\Templates\TestDescription;
+use Razor\Templates\TestItem;
+use Razor\Templates\TestResult;
 
 use Rawebone\Jasmini\DSLAccessor as Jasmini;
 use Rawebone\Jasmini\Tester;
@@ -40,16 +43,26 @@ $boot = function ()
     $resolver = new ServiceResolver();
     injector()->resolver($resolver);
 
-    $resources = new ResourceManager($filesystem, __DIR__ . "/resources/");
-
     $http = new HttpDispatcher(injector(), $resolver);
 
     // Initialise the application and push it onto the DSL Layer
     DSLAccessor::init(new Application($http, $resolver));
 
+    $resources = new ResourceManager($filesystem, __DIR__ . "/resources/");
+    $renderer  = new TemplateRenderer();
+
+    $testResultTpl = new TestResult($resources->framework("templates/test_results.html"), $renderer);
+    $testDescTpl   = new TestDescription($resources->framework("templates/test_description.html"), $renderer);
+    $testItemTpl   = new TestItem($resources->framework("templates/test_item.html"), $renderer);
+
     // Prepare the test system
-    $listener = new HtmlTestListener(__DIR__ . "/../application/test.html", new Filesystem());
+    $listener = new HtmlTestListener(__DIR__ . "/../application/test.html", $filesystem, $testItemTpl, $testDescTpl, $testResultTpl);
     Jasmini::init(new Tester($listener, new Mocker(new Prophet(), new SignatureReader())));
+
+    register_shutdown_function(function () use ($listener)
+    {
+        $listener->stop();
+    });
 };
 
 $boot();

@@ -12,29 +12,54 @@ This document covers the basic concepts of Razor, explaining where they have com
 from, and how they benefit your development cycle; this is summarised by an
 example application walk-through.
 
-## Why to use a Framework
+## When and Why to use a Framework
 
-The term framework when uttered in a room of developers will conjure up both despise
-and relief in equal measure, dividing them all. The despise comes from the "purists"
-who see frameworks as unnecessary bloat, killing the performance of their applications
-and who think that they can write better code than anyone else. These people are by
-and large, [wrong](http://www.reddit.com/r/PHP/comments/234shb/pure_php_vs_using_a_framework/cgtqw2u).
+There is no more elegant a way to sum this up than by reference to the following
+post on [Reddit by Phil Sturgeon](http://www.reddit.com/r/PHP/comments/234shb/pure_php_vs_using_a_framework/cgtqw2u):
+
+    "The level at which to attack a problem will never be agreed upon." or something. Jason Judge, redditor.
+
+    Pure PHP is what Rasmus [Lerdorf] will tell you to use, because ultimate speed and ultimate flexibility. You can do exactly what you want, not have to worry about public bug announcements affecting your code and performance will be marginally improved because theoretically your pure PHP is doing less than a framework is.
+
+    All of that is "theoretically" because it assumes that your code is:
+
+        * Secure
+        * Efficient
+        * Well architected
+        * Well optimized
+
+    In my experience, most folks using "pure PHP" are not hitting any of those criteria.
+    They are usually (in my experience) dickheads who think they are better than everyone else,
+    and who take a really long time to produce really complicated PHP code which is hackable as fuck.
+
+    Not every time for sure, and when you are producing an app at huge scale you may want to look at
+    removing the framework to save that 140ms of bootstrap it has to do, but again, if your code isn't
+    quicker than the framework code then you've just wasted everyones time.
+
+    You have to work out at what point you accept help.
+
+        * Frameworks
+        * Packages
+        * PECL extensions
+
+    They are all extra code. You can't do it all, you don't need to and you shouldn't.
 
 Frameworks provide a way of structuring our applications which makes it easier
 for other developers to understand what is transpiring which improves our ability
 to find where an error is occurring. The performance issue is these days primarily
 redundant - the difference in the time to serve requests between pure PHP and
-a framework are minute and if there are performance issues then there are a number
-of techniques that can be applied for increasing responsiveness:
+a framework are in the microseconds and if there are performance issues then there
+are a number of techniques that can be applied for increasing responsiveness:
 
 * Adding indexes on tables where required
 * Improving query performance
 * Better table design
 * Minimising CSS, JavaScript and Image assets
 * Proper caching of assets using Expiry and E-Tag headers
+* Using a CDN URL to enable the downloading of assets asynchronously
 * Reducing the amount of disk hits/parsing required by using OPCode caching
 * Using a fast process manager to negate performance loss because a PHP process
-  has to be spawned and configured
+  has to be spawned and configured on each request
 * Using memory caches for frequently served data/files
 * In extremely complex systems with lots of files, a compiled cache of the most
   frequently required classes can be created using automated tools to reduce
@@ -42,16 +67,10 @@ of techniques that can be applied for increasing responsiveness:
 
 The question of performance is a grey area which requires tuning per application
 to decided where problems are occurring and handle them. The ideal that pure PHP
-is faster is naive; ideas like those apply to any kind of web application
+is faster is naive; ideas like those above apply to any kind of web application
 regardless of the language or framework choice. The playing field levelled, pure
 PHP doesn't stand up when creating web applications because it leads to messy,
 difficult to maintain code which by and large cannot be tested.
-
-The assertion that code written outside of a framework means that if I as
-developer take over a project, I have to learn the codebase to be able to
-support it. In applications which shun structure because of purist ideals
-this becomes harder and where there are no tests it is much more difficult
-to verify the behaviour of the application. Ultimately, while there are
 
 
 ## Framework Concepts

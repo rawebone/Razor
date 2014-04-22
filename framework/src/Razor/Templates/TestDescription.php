@@ -6,7 +6,7 @@ use Razor\ResourceRenderer;
 
 class TestDescription extends ResourceRenderer
 {
-    public function render($description, $described)
+    public function render($description = "", $described = "")
     {
         $params = compact("description", "described");
 

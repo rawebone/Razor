@@ -7,7 +7,7 @@ use Razor\ResourceRenderer;
 
 class TestItem extends ResourceRenderer
 {
-    public function render($title, $status)
+    public function render($title = "", $status = "")
     {
         $status = $this->statusToString($status);
         $params = compact("title", "status");

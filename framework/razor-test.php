@@ -56,7 +56,7 @@ $boot = function ()
     $testItemTpl   = new TestItem($resources->framework("templates/test_item.html"), $renderer);
 
     // Prepare the test system
-    $listener = new HtmlTestListener(__DIR__ . "/../application/test.html", $filesystem, $testItemTpl, $testDescTpl, $testResultTpl);
+    $listener = new HtmlTestListener(__DIR__ . "/../application/test-results.html", $filesystem, $testItemTpl, $testDescTpl, $testResultTpl);
     Jasmini::init(new Tester($listener, new Mocker(new Prophet(), new SignatureReader())));
 
     register_shutdown_function(function () use ($listener)

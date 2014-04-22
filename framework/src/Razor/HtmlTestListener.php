@@ -3,17 +3,26 @@
 namespace Razor;
 
 use Rawebone\Jasmini\ListenerInterface;
+use Razor\Templates\TestItem;
+use Razor\Templates\TestDescription;
+use Razor\Templates\TestResult;
 
 class HtmlTestListener implements ListenerInterface
 {
     protected $outputFile;
     protected $filesystem;
+    protected $testItem;
+    protected $testDesc;
+    protected $testResult;
     protected $recorded;
 
-    public function __construct($outputFile, Filesystem $filesystem)
+    public function __construct($outputFile, Filesystem $filesystem, TestItem $item, TestDescription $desc, TestResult $result)
     {
         $this->outputFile = $outputFile;
         $this->filesystem = $filesystem;
+        $this->testItem = $item;
+        $this->testDesc = $desc;
+        $this->testResult = $result;
     }
 
     /**
@@ -34,7 +43,19 @@ class HtmlTestListener implements ListenerInterface
      */
     function stop()
     {
-        // TODO: Implement stop() method.
+        $described = "";
+
+        foreach ($this->recorded as $description => $items) {
+
+            $itemString = "";
+            foreach ($items as $item) {
+                $itemString .= $this->testItem->render($item["title"], $item["status"]);
+            }
+
+            $described .= $this->testDesc->render($description, $itemString);
+        }
+
+        $this->filesystem->write($this->outputFile, $this->testResult->render($described));
     }
 
     /**
@@ -48,6 +69,10 @@ class HtmlTestListener implements ListenerInterface
      */
     function record($description, $title, $status, \Exception $ex = null)
     {
-        // TODO: Implement record() method.
+        if (!isset($this->recorded[$description])) {
+            $this->recorded[$description] = array();
+        }
+
+        $this->recorded[$description][] = compact("title", "status", "ex");
     }
 }

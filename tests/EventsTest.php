@@ -19,17 +19,5 @@ class EventsTest extends ProphecyTestCase
 		$events->register("name", $delegate);
 		$events->fire("name");
 	}
-
-	/**
-	 * @expectedException \Razor\UnknownEventException
-	 */
-	public function testDispatchOfNonRegisteredEventThrowsException()
-	{
-		/** @var \Rawebone\Injector\Injector|\Prophecy\Prophecy\ObjectProphecy $injector */
-		$injector = $this->prophesize('Rawebone\Injector\Injector');
-
-		$events = new Events($injector->reveal());
-		$events->fire("blah");
-	}
 }
  

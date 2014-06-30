@@ -21,10 +21,8 @@ class Events
 
 	public function fire($name)
 	{
-		if (!isset($this->registered[$name])) {
-			throw new UnknownEventException($name);
+		if (isset($this->registered[$name])) {
+			$this->injector->inject($this->registered[$name]);
 		}
-
-		$this->injector->inject($this->registered[$name]);
 	}
 }

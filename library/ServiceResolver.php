@@ -30,7 +30,7 @@ class ServiceResolver implements ResolverInterface
 		return $this->services[$service];
 	}
 
-	public function registerService($name, $callable)
+	public function registerService($name, callable $callable)
 	{
 		if ($this->locked) {
 			throw new FrameworkException(sprintf(

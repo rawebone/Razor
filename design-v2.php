@@ -42,9 +42,13 @@ r::get(function (Http $http)
 {
 	$http->request->get("blah");
 
-	$http->response->standard("Hello")->send();
-
-	// This should reduce code bloat significantly
+	// As another point - to ensure testability the delegate
+	// should always return a response and not simply send this
+	// out. That enables the framework greater control of flow
+	// for Unit Testing purposes. The framework will not quibble
+	// on this point as it is up to the end users discretion, but
+	// in general it should be a returned response.
+	return $http->response->standard("Hello");
 });
 
 // To enable better testing, we can use the run method.
@@ -63,7 +67,9 @@ r::event("http.not-found", function ()
 
 r::fire("http.not-found");
 
-// The event API also supports the injection system.
+// The event API also supports the injection system. In addition,
+// pre- and post-run events will be added to enable more concise
+// handling.
 
 // Logging is also improved - in V1 there was an $applog service
 // which had to be backed by configuration and a Filesystem object.

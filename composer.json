@@ -1,0 +1,25 @@
+{
+    "name": "rawebone/razor-library",
+    "description": "Provides the core Razor handling",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nick Rawe",
+            "email": "rawebone@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Razor\\": [ "library/" ]
+        }
+    },
+    "require": {
+        "psr/log": "1.0.*",
+        "rawebone/injector": "1.*",
+        "symfony/http-foundation": "2.4.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.1.*"
+    }
+}

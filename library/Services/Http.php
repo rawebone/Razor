@@ -33,6 +33,11 @@ class Http
 		return null;
 	}
 
+	/**
+	 * Halts the current request dispatch.
+	 *
+	 * @throws \Razor\HttpAbortException
+	 */
 	public function abort()
 	{
 		throw new HttpAbortException();

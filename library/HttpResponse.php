@@ -8,6 +8,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+/**
+ * HttpResponse provides a wrapper over the Symfony HttpFoundation
+ * Response objects for consumption in the framework Applications,
+ *
+ * @package Razor
+ */
 class HttpResponse
 {
 	public function standard($contents = "", $status = 200, array $headers = [])

@@ -10,6 +10,14 @@ class ServiceResolver implements ResolverInterface
 {
 	protected $services = [];
 
+	/**
+	 * Registers a Service identified by Name. This can be an
+	 * object instance or a callable.
+	 *
+	 * @param string $name
+	 * @param object|callable $service
+	 * @throws \Rawebone\Injector\ResolutionException
+	 */
 	public function register($name, $service)
 	{
 		$delegate = $service;

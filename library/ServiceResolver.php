@@ -8,8 +8,27 @@ use Rawebone\Injector\ResolverInterface;
 
 class ServiceResolver implements ResolverInterface
 {
-	protected $services = array();
-	protected $locked;
+	protected $services = [];
+
+	public function register($name, $service)
+	{
+		$delegate = $service;
+
+		if (is_object($service)) {
+			$delegate = function () use ($service) { return $service; };
+		} else if (!is_callable($service)) {
+			throw new ResolutionException("Service provider for '$name' is invalid");
+		}
+
+		$this->services[$name] = new Func($delegate);
+	}
+
+	public function registerMany(array $services = [])
+	{
+		foreach ($this->services as $name => $service) {
+			$this->register($name, $service);
+		}
+	}
 
 	/**
 	 * Returns the service by name.
@@ -21,42 +40,9 @@ class ServiceResolver implements ResolverInterface
 	public function resolve($service)
 	{
 		if (!isset($this->services[$service])) {
-			throw new ResolutionException(sprintf(
-				"Could not resolve the service named '%s'",
-				$service
-			));
+			throw new ResolutionException("Service '$service' not registered");
 		}
 
 		return $this->services[$service];
-	}
-
-	public function registerService($name, callable $callable)
-	{
-		if ($this->locked) {
-			throw new FrameworkException(sprintf(
-				"Cannot register service '%s' as the Injector is locked",
-				$name
-			));
-		}
-
-		$this->services[$name] = new Func($callable);
-	}
-
-	public function lock()
-	{
-		if ($this->locked) {
-			throw new FrameworkException("Injector is already locked, cannot attempt re-lock");
-		}
-
-		return $this->locked = uniqid();
-	}
-
-	public function unlock($key)
-	{
-		if ($this->locked === $key) {
-			$this->locked = null;
-		}
-
-		return true;
 	}
 }

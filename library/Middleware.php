@@ -5,9 +5,8 @@ namespace Razor;
 use Rawebone\Injector\Injector;
 
 /**
- * Middleware provides the basic mechanism for intercepting method
- * requests as they are being dispatched. This makes adding generic
- * functionality cheap and easy.
+ * Middleware provides the ability for users to intercept
+ * the current request/response cycle.
  *
  * @package Razor
  */
@@ -15,43 +14,35 @@ class Middleware
 {
 	protected $delegate;
 
-	/**
-	 * @var \Rawebone\Injector\Injector
-	 */
-	protected $injector;
-
 	public function __construct(callable $delegate)
 	{
 		$this->delegate = $delegate;
 	}
 
 	/**
-	 * This method should be overridden by the child object
-	 * to provide the handling required.
+	 * Invokes the wrapped delegate, children should
+	 * override this method to add behaviour.
 	 *
-	 * @return mixed
+	 * @param Injector $injector
+	 * @return mixed|object
 	 */
-	public function __invoke()
+	public function __invoke(Injector $injector)
 	{
-		return $this->invokeTarget();
+		return $injector->inject($this->delegate);
 	}
 
 	/**
-	 * Helper to make sure the delegate is correctly invoked.
+	 * Provides us with access to the underlying delegate for
+	 * direct testing.
 	 *
-	 * @return mixed
+	 * @return callable
 	 */
-	public function invokeTarget()
+	public function unwrap()
 	{
 		if ($this->delegate instanceof Middleware) {
-			$this->delegate->letInjectorBe($this->injector);
+			return $this->delegate->unwrap();
+		} else {
+			return $this->delegate;
 		}
-
-		return $this->injector->inject($this->delegate);
-	}
-
-	public function letInjectorBe(Injector $injector)
-	{
-		$this->injector = $injector;
 	}
 }

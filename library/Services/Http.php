@@ -1,7 +1,9 @@
 <?php
 
-namespace Razor;
+namespace Razor\Services;
 
+use Razor\HttpResponse;
+use Razor\HttpAbortException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -30,4 +32,9 @@ class Http
 
 		return null;
 	}
-}
+
+	public function abort()
+	{
+		throw new HttpAbortException();
+	}
+} 

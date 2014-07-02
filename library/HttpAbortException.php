@@ -2,4 +2,4 @@
 
 namespace Razor;
 
-class HttpAbortException extends \RuntimeException { }
+class HttpAbortException extends \Exception { }

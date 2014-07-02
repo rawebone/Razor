@@ -2,37 +2,36 @@
 
 namespace Razor\Tests;
 
-use Prophecy\PhpUnit\ProphecyTestCase;
 use Razor\Middleware;
+use Prophecy\PhpUnit\ProphecyTestCase;
 
 class MiddlewareTest extends ProphecyTestCase
 {
-	public function testInvocationWithAClosureDelegate()
+	public function testInvocation()
 	{
-		$delegate = function () { };
+		$func = function () { };
+		$middleware = new Middleware($func);
 
-		/** @var \Rawebone\Injector\Injector|\Prophecy\Prophecy\ObjectProphecy $injector */
 		$injector = $this->prophesize('Rawebone\Injector\Injector');
-		$injector->inject($delegate)->willReturn(true);
+		$injector->inject($func)->willReturn(true);
 
-		$middleware = new Middleware($delegate);
-		$middleware->letInjectorBe($injector->reveal());
-
-		$this->assertEquals(true, $middleware());
+		$this->assertEquals(true, $middleware($injector->reveal()));
 	}
 
-	public function testInvocationWithAMiddlewareDelegate()
+	public function testBasicUnwrapping()
 	{
-		$delegate = new Middleware(function () { });
+		$func = function () { };
+		$middleware = new Middleware($func);
 
-		/** @var \Rawebone\Injector\Injector|\Prophecy\Prophecy\ObjectProphecy $injector */
-		$injector = $this->prophesize('Rawebone\Injector\Injector');
-		$injector->inject($delegate)->willReturn(true);
+		$this->assertEquals($func, $middleware->unwrap());
+	}
 
-		$middleware = new Middleware($delegate);
-		$middleware->letInjectorBe($injector->reveal());
+	public function testAdvancedUnwrapping()
+	{
+		$func = function () { };
+		$middleware = new Middleware(new Middleware($func));
 
-		$this->assertEquals(true, $middleware());
+		$this->assertEquals($func, $middleware->unwrap());
 	}
 }
  

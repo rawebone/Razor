@@ -2,48 +2,52 @@
 
 namespace Razor\Tests;
 
-use Razor\Razor as r;
 use Prophecy\PhpUnit\ProphecyTestCase;
+use Razor\EndPoint;
+use Razor\Environment;
+use Razor\Razor;
 
 class RazorTest extends ProphecyTestCase
 {
-	/**
-	 * @expectedException \Razor\HttpAbortException
-	 */
-	public function testAbortThrowsHttpAbortException()
+	public function testEnvironmentYeildsDefault()
 	{
-		r::abort();
+		$this->assertInstanceOf(
+			'Razor\Environment',
+			Razor::environment()
+		);
 	}
 
-	public function testResettingTheKernel()
+	public function testSettingOfEnvironment()
 	{
-		r::reset();
+		$env = new Environment();
 
-		$kid = r::kernelId();
-
-		r::reset();
-
-		$this->assertNotEquals($kid, r::kernelId());
+		Razor::environment($env);
+		$this->assertEquals($env, Razor::environment());
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
-	public function testEventFrontEnd()
+	public function testRun()
 	{
-		r::reset();
+		$env = $this->prophesize('Razor\Environment');
+		$env->testing = true;
+		$env->services()->shouldNotBeCalled();
 
-		r::event("name", function () { throw new \InvalidArgumentException(); });
-		r::fire("name");
+		Razor::environment($env->reveal());
+
+		Razor::run(new EndPoint());
 	}
 
-	public function testServiceResolutionFrontEnd()
+	public function testRunStoresLastEndPoint()
 	{
-		r::reset();
+		$env = $this->prophesize('Razor\Environment');
+		$env->testing = true;
+		$env->services()->shouldNotBeCalled();
 
-		r::services([
-			"a" => function () { }
-		]);
+		Razor::environment($env->reveal());
+
+		$ep = new EndPoint();
+		Razor::run($ep);
+
+		$this->assertEquals($ep, Razor::endPoint());
 	}
 }
  

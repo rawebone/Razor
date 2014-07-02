@@ -10,17 +10,19 @@ class ServiceResolverTest extends ProphecyTestCase
 	public function testRegisterAndResolution()
 	{
 		$resolver = new ServiceResolver();
-		$resolver->register("blah", function () { });
+		$resolver->register("blah", function () { return true; });
 
 		$this->assertInstanceOf('Rawebone\Injector\Func', $resolver->resolve("blah"));
+		$this->assertEquals(true, $resolver->resolve("blah")->invoke(array()));
 	}
 
 	public function testRegisterInstance()
 	{
 		$resolver = new ServiceResolver();
-		$resolver->register("blah", new \stdClass());
+		$resolver->register("blah", ($cls = new \stdClass()));
 
 		$this->assertInstanceOf('Rawebone\Injector\Func', $resolver->resolve("blah"));
+		$this->assertEquals($cls, $resolver->resolve("blah")->invoke(array()));
 	}
 
 	/**

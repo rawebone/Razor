@@ -14,7 +14,7 @@ class ServiceResolver implements ResolverInterface
 	{
 		$delegate = $service;
 
-		if (is_object($service)) {
+		if (!$service instanceof \Closure && is_object($service)) {
 			$delegate = function () use ($service) { return $service; };
 		} else if (!is_callable($service)) {
 			throw new ResolutionException("Service provider for '$name' is invalid");

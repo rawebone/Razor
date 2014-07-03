@@ -1,0 +1,122 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "30f8e078d2d61fb6f42295dfe7f9a2e1",
+    "packages": [
+        {
+            "name": "rawebone/injector",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rawebone/Injector.git",
+                "reference": "1a367fe406ed309bbdd5c39fdefc2d73060919c3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rawebone/Injector/zipball/1a367fe406ed309bbdd5c39fdefc2d73060919c3",
+                "reference": "1a367fe406ed309bbdd5c39fdefc2d73060919c3",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpspec/phpspec": "2.1.x-dev"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "": [
+                        "spec/"
+                    ]
+                },
+                "psr-4": {
+                    "Rawebone\\Injector\\": [
+                        "library/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nick Rawe",
+                    "email": "rawebone@gmail.com"
+                }
+            ],
+            "description": "A library providing a low level service injection API",
+            "time": "2014-06-08 19:55:53"
+        },
+        {
+            "name": "symfony/http-foundation",
+            "version": "v2.4.6",
+            "target-dir": "Symfony/Component/HttpFoundation",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/HttpFoundation.git",
+                "reference": "138498f3d64981cfafcb5eec3b2b96fce44a178e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/138498f3d64981cfafcb5eec3b2b96fce44a178e",
+                "reference": "138498f3d64981cfafcb5eec3b2b96fce44a178e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "symfony/expression-language": "~2.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\HttpFoundation\\": ""
+                },
+                "classmap": [
+                    "Symfony/Component/HttpFoundation/Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony HttpFoundation Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-05-22 16:21:00"
+        }
+    ],
+    "packages-dev": null,
+    "aliases": [
+
+    ],
+    "minimum-stability": "stable",
+    "stability-flags": [
+
+    ],
+    "platform": {
+        "php": ">=5.4"
+    },
+    "platform-dev": [
+
+    ]
+}

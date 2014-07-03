@@ -42,6 +42,10 @@ Razor::run($ep);
 
 ```
 
+In this example, when the index page of our application is requested, an `EndPoint`
+object will be configured to echo "Hello, World!" when the request is made with the
+`GET` HTTP verb. This configured `EndPoint` is then run against the request.
+
 The `EndPoint` object accounts for most of the basic HTTP Verbs, but should you need more
 you can simply create an extension from the EndPoint object to suit your own needs. There
 is not uber fancy handling at work in the background.
@@ -128,6 +132,12 @@ $services->register("service", function ()
     return new MyService();
 });
 
+$services->registerMany([
+    "aardvark" => new sdtClass(),
+
+    "silly" => function () { return new SillyService(); }
+]);
+
 Razor::environment($environment);
 
 ```
@@ -165,7 +175,10 @@ object.
 ### Middleware
 
 Razor ships with a middleware solution, built on-top of the Service
-injection system:
+injection system. The goal of middleware is to provide small, generic
+handling to problems and can be conceived of as being like the layers
+of an onion - you invoke a middleware, and it then performs an action,
+calling the next middleware in the chain.
 
 
 ```php
@@ -174,23 +187,22 @@ injection system:
 
 use Razor\Middleware;
 use Razor\Services\Http;
-use Rawebone\Injector\Injector;
 
 class SecurityMiddleware extends Middleware
 {
-    public function __invoke(Injector $injector, Http $http)
+    public function __invoke(Http $http)
     {
         if (!$http->request->isSecure()) {
             return $http->response->standard("Whoa! Your connection is not secure!", 400);
         }
 
-        return $injector->inject($this->delegate);
+        return $this->invokeDelegate();
     }
 }
 
 ```
 
-This allows us to do basic filtering and handling on a per HTTP verb delegate
+This example allows us to do basic filtering and handling on a per HTTP verb delegate
 basis:
 
 
@@ -202,6 +214,11 @@ basis:
 
 $ep = (new EndPoint())
 
+    ->get(function ()
+    {
+        // Secure, insecure - who cares?
+    })
+
     ->post(new SecurityMiddleware(function()
     {
         // This is a secure connection
@@ -210,6 +227,26 @@ $ep = (new EndPoint())
 // ...
 
 ```
+
+Middleware can also be used to wrap the target, say for exception handling
+or the like. We could also use this for firewalling or logging access. The
+sky is the limit. Middleware can also wrap Middleware:
+
+```php
+
+// File: public/index.php
+
+// ...
+
+$ep = (new EndPoint())
+
+    ->get(new Middleware1(new Middleware2(function ()
+    {
+
+    })));
+
+```
+
 
 ### Responses
 

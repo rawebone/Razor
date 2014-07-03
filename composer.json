@@ -17,7 +17,6 @@
     },
     "require": {
         "php": ">=5.4",
-        "psr/log": "1.0.*",
         "rawebone/injector": "1.*",
         "symfony/http-foundation": "2.4.*"
     },

@@ -7,6 +7,7 @@ use Razor\Dispatcher;
 use Razor\HttpAbortException;
 use Razor\ServiceResolver;
 use Symfony\Component\HttpFoundation\Request;
+use Prophecy\Argument;
 
 class DispatcherTest extends ProphecyTestCase
 {
@@ -115,6 +116,52 @@ class DispatcherTest extends ProphecyTestCase
 
 		$endPoint = $this->prophesize('Razor\EndPoint');
 		$endPoint->get()->willReturn($func);
+
+		(new Dispatcher($environment->reveal(), $endPoint->reveal()));
+	}
+
+	public function testDispatchSetsInjectorOnMiddlewarePriorToInvocation()
+	{
+		$resolver = new ServiceResolver();
+		$resolver->register("request", Request::create("/blah.php"));
+
+		$environment = $this->prophesize('Razor\Environment');
+		$environment->testing = false;
+		$environment->services()->willReturn($resolver);
+
+		$response = $this->prophesize('Symfony\Component\HttpFoundation\Response');
+		$response->send()->shouldBeCalled();
+
+		$middleware = $this->prophesize('Razor\Middleware');
+		$middleware->invokeDelegate()->willReturn($response->reveal());
+		$middleware->letInjectorBe(Argument::type('Rawebone\Injector\Injector'))->shouldBeCalled();
+
+		$endPoint = $this->prophesize('Razor\EndPoint');
+		$endPoint->get()->willReturn($middleware);
+
+		(new Dispatcher($environment->reveal(), $endPoint->reveal()));
+	}
+
+	public function testDispatchSetsInjectorOnErrorMiddlewarePriorToInvocation()
+	{
+		$resolver = new ServiceResolver();
+		$resolver->register("request", Request::create("/blah.php"));
+
+		$environment = $this->prophesize('Razor\Environment');
+		$environment->testing = false;
+		$environment->development = false;
+		$environment->services()->willReturn($resolver);
+
+		$response = $this->prophesize('Symfony\Component\HttpFoundation\Response');
+		$response->send()->shouldBeCalled();
+
+		$middleware = $this->prophesize('Razor\Middleware');
+		$middleware->invokeDelegate()->willReturn($response->reveal());
+		$middleware->letInjectorBe(Argument::type('Rawebone\Injector\Injector'))->shouldBeCalled();
+
+		$endPoint = $this->prophesize('Razor\EndPoint');
+		$endPoint->get()->willReturn(function () use ($response) { throw new \Exception(); });
+		$endPoint->onError()->willReturn($middleware);
 
 		(new Dispatcher($environment->reveal(), $endPoint->reveal()));
 	}

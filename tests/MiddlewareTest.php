@@ -15,7 +15,19 @@ class MiddlewareTest extends ProphecyTestCase
 		$injector = $this->prophesize('Rawebone\Injector\Injector');
 		$injector->inject($func)->willReturn(true);
 
-		$this->assertEquals(true, $middleware($injector->reveal()));
+		$middleware->letInjectorBe($injector->reveal());
+
+		$this->assertEquals(true, $middleware());
+	}
+
+	public function testLetInjectorInstanceIsPassedOnToOtherMiddleware()
+	{
+		$injector = $this->prophesize('Rawebone\Injector\Injector');
+		$delegate = $this->prophesize('Razor\Middleware');
+		$delegate->letInjectorBe($injector->reveal())->shouldBeCalled();
+
+		$middleware = new Middleware($delegate->reveal());
+		$middleware->letInjectorBe($injector->reveal());
 	}
 
 	public function testBasicUnwrapping()

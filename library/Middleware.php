@@ -12,7 +12,20 @@ use Rawebone\Injector\Injector;
  */
 class Middleware
 {
+	/**
+	 * The Middleware/Delegate function to be invoked
+	 * after this Middleware is invoked.
+	 *
+	 * @var callable
+	 */
 	protected $delegate;
+
+	/**
+	 * The Injector instance to be used for calling the delegate.
+	 *
+	 * @var Injector
+	 */
+	protected $injector;
 
 	public function __construct(callable $delegate)
 	{
@@ -21,14 +34,26 @@ class Middleware
 
 	/**
 	 * Invokes the wrapped delegate, children should
-	 * override this method to add behaviour.
+	 * override this method to add behaviour. It can
+	 * have any services required added to its signature
+	 * for injection.
 	 *
-	 * @param Injector $injector
 	 * @return mixed|object
 	 */
-	public function __invoke(Injector $injector)
+	public function __invoke()
 	{
-		return $injector->inject($this->delegate);
+		return $this->invokeDelegate();
+	}
+
+	/**
+	 * Helper to call the injection system on the next
+	 * delegate.
+	 *
+	 * @return mixed|object
+	 */
+	public function invokeDelegate()
+	{
+		return $this->injector->inject($this->delegate);
 	}
 
 	/**
@@ -44,5 +69,20 @@ class Middleware
 		} else {
 			return $this->delegate;
 		}
+	}
+
+	/**
+	 * Sets the instance of the Injector to be used during
+	 * dispatch.
+	 *
+	 * @param Injector $injector
+	 */
+	public function letInjectorBe(Injector $injector)
+	{
+		if ($this->delegate instanceof Middleware) {
+			$this->delegate->letInjectorBe($injector);
+		}
+
+		$this->injector = $injector;
 	}
 }

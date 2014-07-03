@@ -19,17 +19,10 @@ class Dispatcher
 			return;
 		}
 
-		$injector = new Injector();
-		$injector->resolver($environment->services());
-		$environment->services()->register("injector", $injector);
-
-		/** @var \Symfony\Component\HttpFoundation\Request $request */
-		$request = $injector->service("request");
-		$method  = strtolower($request->getMethod());
+		$injector = $this->makeInjectorInstance($environment);
 
 		try {
-			$handler = (method_exists($endPoint, $method) && !is_null($endPoint->$method()) ? $endPoint->$method() : $endPoint->onNotFound());
-			$resp = $injector->inject($handler);
+			$resp = $this->dispatchMethod($injector, $endPoint);
 
 		} catch (HttpAbortException $ex) {
 			// Response has been sent manually or the application is in some other
@@ -41,12 +34,70 @@ class Dispatcher
 				throw $ex;
 			}
 
-			$environment->services()->register("exception", $ex);
-			$resp = $injector->inject($endPoint->onError());
+			$resp = $this->dispatchError($injector, $endPoint, $environment, $ex);
 		}
 
 		if ($resp instanceof Response) {
 			$resp->send();
 		}
+	}
+
+	/**
+	 * Returns an Injector instance for the current environment.
+	 *
+	 * @param Environment $environment
+	 * @return Injector
+	 */
+	protected function makeInjectorInstance(Environment $environment)
+	{
+		$injector = new Injector();
+		$injector->resolver($environment->services());
+		$environment->services()->register("injector", $injector);
+
+		return $injector;
+	}
+
+	/**
+	 * Handles the dispatch of the current HTTP method against the End Point
+	 *
+	 * @param Injector $injector
+	 * @param EndPoint $endPoint
+	 * @return Response|null
+	 */
+	protected function dispatchMethod(Injector $injector, EndPoint $endPoint)
+	{
+		/** @var \Symfony\Component\HttpFoundation\Request $request */
+		$request = $injector->service("request");
+		$method  = strtolower($request->getMethod());
+
+		$handler = (method_exists($endPoint, $method) && !is_null($endPoint->$method()) ? $endPoint->$method() : $endPoint->onNotFound());
+
+		if ($handler instanceof Middleware) {
+			$handler->letInjectorBe($injector);
+		}
+
+		return $injector->inject($handler);
+	}
+
+	/**
+	 * Handles the dispatch of an exception to the onError handler.
+	 *
+	 * @param Injector $injector
+	 * @param EndPoint $endPoint
+	 * @param Environment $environment
+	 * @param \Exception $exception
+	 * @return Response|null
+	 */
+	protected function dispatchError(Injector $injector, EndPoint $endPoint, Environment $environment, \Exception $exception)
+	{
+		$environment->services()->register("exception", $exception);
+
+		$errorHandler = $endPoint->onError();
+
+		if ($errorHandler instanceof Middleware) {
+			$errorHandler->letInjectorBe($injector);
+		}
+
+		return $injector->inject($errorHandler);
 	}
 } 

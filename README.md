@@ -30,7 +30,7 @@ require_once(__DIR__ . "/../vendor/autoload.php");
 
 use Razor\EndPoint;
 
-(new EndPoint())
+(new EndPoint()) // EndPoint::create() on PHP <=5.5
 
     ->get(function ()
     {

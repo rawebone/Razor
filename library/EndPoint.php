@@ -80,4 +80,9 @@ class EndPoint
 	{
 		Razor::run($this);
 	}
+
+	public static function create()
+	{
+		return new static();
+	}
 }

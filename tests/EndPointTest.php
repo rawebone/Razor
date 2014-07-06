@@ -25,5 +25,10 @@ class EndPointTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->assertEquals(true, is_callable((new EndPoint())->onNotFound()));
 	}
+
+	public function testCreateByStatic()
+	{
+		$this->assertInstanceOf('Razor\EndPoint', EndPoint::create());
+	}
 }
  

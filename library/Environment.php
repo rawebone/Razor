@@ -4,6 +4,7 @@ namespace Razor;
 
 use Razor\Services\Http;
 use Symfony\Component\HttpFoundation\Request;
+use Rawebone\Injector\RegisterResolver;
 
 class Environment
 {
@@ -14,7 +15,7 @@ class Environment
 
 	public function __construct()
 	{
-		$this->services = new ServiceResolver();
+		$this->services = new RegisterResolver();
 
 		$this->setupServices();
 	}
@@ -22,7 +23,7 @@ class Environment
 	/**
 	 * The environments service container.
 	 *
-	 * @return ServiceResolver
+	 * @return \Rawebone\Injector\RegisterResolver
 	 */
 	public function services()
 	{

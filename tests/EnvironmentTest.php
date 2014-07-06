@@ -18,7 +18,7 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
 	{
 		$env = new Environment();
 
-		$this->assertInstanceOf('Razor\ServiceResolver', $env->services());
+		$this->assertInstanceOf('Rawebone\Injector\RegisterResolver', $env->services());
 	}
 }
  

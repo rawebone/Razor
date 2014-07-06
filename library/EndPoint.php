@@ -12,7 +12,16 @@ use Razor\Services\Http;
  */
 class EndPoint
 {
-	protected $verbs = [];
+	use FluentPropertySetter;
+
+	protected $onError;
+	protected $onNotFound;
+	protected $get;
+	protected $put;
+	protected $delete;
+	protected $patch;
+	protected $head;
+	protected $options;
 
 	public function __construct()
 	{
@@ -29,59 +38,41 @@ class EndPoint
 
 	public function get(callable $delegate = null)
 	{
-		return $this->assignOrReturn(__FUNCTION__, $delegate);
+		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function post(callable $delegate = null)
 	{
-		return $this->assignOrReturn(__FUNCTION__, $delegate);
+		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function delete(callable $delegate = null)
 	{
-		return $this->assignOrReturn(__FUNCTION__, $delegate);
+		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function patch(callable $delegate = null)
 	{
-		return $this->assignOrReturn(__FUNCTION__, $delegate);
+		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function head(callable $delegate = null)
 	{
-		return $this->assignOrReturn(__FUNCTION__, $delegate);
+		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function options(callable $delegate = null)
 	{
-		return $this->assignOrReturn(__FUNCTION__, $delegate);
+		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function onError(callable $delegate = null)
 	{
-		return $this->assignOrReturn(__FUNCTION__, $delegate);
+		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function onNotFound(callable $delegate = null)
 	{
-		return $this->assignOrReturn(__FUNCTION__, $delegate);
-	}
-
-	/**
-	 * Basic handling for assigning delegates to HTTP Verbs.
-	 *
-	 * @param $verb
-	 * @param callable $delegate
-	 * @return $this|null
-	 */
-	protected function assignOrReturn($verb, callable $delegate = null)
-	{
-		if (is_null($delegate)) {
-			return (isset($this->verbs[$verb]) ? $this->verbs[$verb] : null);
-
-		} else {
-			$this->verbs[$verb] = $delegate;
-			return $this;
-		}
+		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 }

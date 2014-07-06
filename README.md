@@ -29,22 +29,22 @@ End Points. As such, the most basic of applications in the framework is:
 require_once(__DIR__ . "/../vendor/autoload.php");
 
 use Razor\EndPoint;
-use Razor\Razor;
 
-$ep = (new EndPoint())
+(new EndPoint())
 
     ->get(function ()
     {
         echo "Hello, World!";
-    });
+    })
 
-Razor::run($ep);
+    ->run();
 
 ```
 
 In this example, when the index page of our application is requested, an `EndPoint`
 object will be configured to echo "Hello, World!" when the request is made with the
-`GET` HTTP verb. This configured `EndPoint` is then run against the request.
+`GET` HTTP verb. This configured `EndPoint` is then run against the request by the call
+to `run()`.
 
 The `EndPoint` object accounts for most of the basic HTTP Verbs, but should you need more
 you can simply create an extension from the EndPoint object to suit your own needs. There
@@ -54,7 +54,7 @@ Our `EndPoint` can also specify handlers to be invoked in two special circumstan
 
 ```php
 
-$ep = (new EndPoint())
+(new EndPoint())
 
     // This will be invoked when an error occurs in processing of the current method
     ->onError(function ()
@@ -150,7 +150,7 @@ Razor::environment($environment);
 
 // ...
 
-$ep = (new EndPoint())
+(new EndPoint())
 
     ->get(function (MyService $service)
     {
@@ -212,7 +212,7 @@ basis:
 
 // ...
 
-$ep = (new EndPoint())
+(new EndPoint())
 
     ->get(function ()
     {
@@ -238,7 +238,7 @@ sky is the limit. Middleware can also wrap Middleware:
 
 // ...
 
-$ep = (new EndPoint())
+(new EndPoint())
 
     ->get(new Middleware1(new Middleware2(function ()
     {
@@ -262,7 +262,7 @@ necessary, is the way you should write your code using the framework:
 
 // ...
 
-$ec = (new EndPoint())
+(new EndPoint())
 
     ->get(function (Http $http)
     {

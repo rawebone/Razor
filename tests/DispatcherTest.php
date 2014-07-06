@@ -3,9 +3,9 @@
 namespace Razor\Tests;
 
 use Prophecy\PhpUnit\ProphecyTestCase;
+use Rawebone\Injector\RegisterResolver;
 use Razor\Dispatcher;
 use Razor\HttpAbortException;
-use Razor\ServiceResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Prophecy\Argument;
 
@@ -24,7 +24,7 @@ class DispatcherTest extends ProphecyTestCase
 
 	public function testDispatchCallsEndPointMethod()
 	{
-		$resolver = new ServiceResolver();
+		$resolver = new RegisterResolver();
 		$resolver->register("request", Request::create("/blah.php"));
 
 		$environment = $this->prophesize('Razor\Environment');
@@ -44,7 +44,7 @@ class DispatcherTest extends ProphecyTestCase
 
 	public function testDispatchCallsNotFound()
 	{
-		$resolver = new ServiceResolver();
+		$resolver = new RegisterResolver();
 		$resolver->register("request", Request::create("/blah.php", "MKCOL"));
 
 		$environment = $this->prophesize('Razor\Environment');
@@ -64,7 +64,7 @@ class DispatcherTest extends ProphecyTestCase
 
 	public function testDispatchCallsOnError()
 	{
-		$resolver = new ServiceResolver();
+		$resolver = new RegisterResolver();
 		$resolver->register("request", Request::create("/blah.php"));
 
 		$environment = $this->prophesize('Razor\Environment');
@@ -89,7 +89,7 @@ class DispatcherTest extends ProphecyTestCase
 	 */
 	public function testDispatchThrowsException()
 	{
-		$resolver = new ServiceResolver();
+		$resolver = new RegisterResolver();
 		$resolver->register("request", Request::create("/blah.php"));
 
 		$environment = $this->prophesize('Razor\Environment');
@@ -105,7 +105,7 @@ class DispatcherTest extends ProphecyTestCase
 
 	public function testDispatchAllowsForAbort()
 	{
-		$resolver = new ServiceResolver();
+		$resolver = new RegisterResolver();
 		$resolver->register("request", Request::create("/blah.php"));
 
 		$environment = $this->prophesize('Razor\Environment');
@@ -122,7 +122,7 @@ class DispatcherTest extends ProphecyTestCase
 
 	public function testDispatchSetsInjectorOnMiddlewarePriorToInvocation()
 	{
-		$resolver = new ServiceResolver();
+		$resolver = new RegisterResolver();
 		$resolver->register("request", Request::create("/blah.php"));
 
 		$environment = $this->prophesize('Razor\Environment');
@@ -144,7 +144,7 @@ class DispatcherTest extends ProphecyTestCase
 
 	public function testDispatchSetsInjectorOnErrorMiddlewarePriorToInvocation()
 	{
-		$resolver = new ServiceResolver();
+		$resolver = new RegisterResolver();
 		$resolver->register("request", Request::create("/blah.php"));
 
 		$environment = $this->prophesize('Razor\Environment');

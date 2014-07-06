@@ -1,9 +1,58 @@
 # Razor
 
-Razor is a simple micro framework based somewhat on [Slim](http://www.slimframework.com)
+Razor is a simple REST micro framework based somewhat on [Slim](http://www.slimframework.com)
 and [Silex](http://silex.sensiolabs.org/) but designed to provide more straight-forward
 syntax and testing. This documentation is still in progress, but the API is pretty-well
 commented so should provide enough to delve right into.
+
+
+## Philosophy
+
+### 1. Front controllers cause unnecessary complexity
+
+This is because you have to setup a routing system, configure web servers
+and abstract logic into other files. When designing we need the least complications
+getting in the way of our creativity, and as such having as much of the logic of
+the request handling in the file requested is best.
+
+
+### 2. Service Location should be simple
+
+Razor is built upon the ideas of Service Location and Dependency Injection. Like Silex
+and Slim the framework exposes a Service Container which allows us to lazily provide
+object instances to our application. Unlike these frameworks, these services can actually
+be *injected* into our logic as opposed to being pulled into our logic:
+
+```php
+
+// Other SL based frameworks
+
+$framework->container()->service("name", function () { return new MyService(); });
+$framework-get(function () use ($framework) { $framework->container()->get("name")->blah(); }));
+
+// Razor
+
+$environment->services()->register("name", function () { return new MyService(); });
+(new EndPoint())->get(function (MyService $name) { $name->blah() });
+
+```
+
+This allows us to be more concise in our coding and testing. The methodology
+is similar to that present in AngularJS.
+
+
+### 3. Brevity always wins
+
+If there is a way we can make our code easier to write and read, we should take it
+even if that means making the framework have to work harder or engage in otherwise
+*bad practice* like global state - we just have to do it better.
+
+
+### 4. The least we can do, the better
+
+You need to be able to trust the code you work with, as such I've tried to keep
+the functionality to a minimum so that it can be easily assessed. It also means
+that the framework should have less issues with security.
 
 
 ## Basic Usage

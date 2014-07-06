@@ -75,4 +75,9 @@ class EndPoint
 	{
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
+
+	public function run()
+	{
+		Razor::run($this);
+	}
 }

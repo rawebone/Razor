@@ -16,19 +16,19 @@ class EndPointTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($func, $ep->get());
 	}
 
+	public function testCreateByStatic()
+	{
+		$this->assertInstanceOf('Razor\EndPoint', EndPoint::create());
+	}
+
 	public function testOnErrorYieldsInjectable()
 	{
-		$this->assertEquals(true, is_callable((new EndPoint())->onError()));
+		$this->assertEquals(true, is_callable(EndPoint::create()->onError()));
 	}
 
 	public function testOnNotFoundYieldsInjectable()
 	{
-		$this->assertEquals(true, is_callable((new EndPoint())->onNotFound()));
-	}
-
-	public function testCreateByStatic()
-	{
-		$this->assertInstanceOf('Razor\EndPoint', EndPoint::create());
+		$this->assertEquals(true, is_callable(EndPoint::create()->onNotFound()));
 	}
 }
  

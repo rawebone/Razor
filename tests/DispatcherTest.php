@@ -19,7 +19,7 @@ class DispatcherTest extends ProphecyTestCase
 
 		$endPoint = $this->prophesize('Razor\EndPoint');
 
-		(new Dispatcher($environment->reveal(), $endPoint->reveal()));
+		(new Dispatcher())->dispatch($environment->reveal(), $endPoint->reveal());
 	}
 
 	public function testDispatchCallsEndPointMethod()
@@ -39,7 +39,7 @@ class DispatcherTest extends ProphecyTestCase
 		$endPoint = $this->prophesize('Razor\EndPoint');
 		$endPoint->get()->willReturn($func);
 
-		(new Dispatcher($environment->reveal(), $endPoint->reveal()));
+		(new Dispatcher())->dispatch($environment->reveal(), $endPoint->reveal());
 	}
 
 	public function testDispatchCallsNotFound()
@@ -59,7 +59,7 @@ class DispatcherTest extends ProphecyTestCase
 		$endPoint = $this->prophesize('Razor\EndPoint');
 		$endPoint->onNotFound()->willReturn($func);
 
-		(new Dispatcher($environment->reveal(), $endPoint->reveal()));
+		(new Dispatcher())->dispatch($environment->reveal(), $endPoint->reveal());
 	}
 
 	public function testDispatchCallsOnError()
@@ -81,7 +81,7 @@ class DispatcherTest extends ProphecyTestCase
 		$endPoint->get()->willReturn(function () use ($response) { throw new \Exception(); });
 		$endPoint->onError()->willReturn($func);
 
-		(new Dispatcher($environment->reveal(), $endPoint->reveal()));
+		(new Dispatcher())->dispatch($environment->reveal(), $endPoint->reveal());
 	}
 
 	/**
@@ -100,7 +100,7 @@ class DispatcherTest extends ProphecyTestCase
 		$endPoint = $this->prophesize('Razor\EndPoint');
 		$endPoint->get()->willReturn(function () { throw new \Exception(); });
 
-		(new Dispatcher($environment->reveal(), $endPoint->reveal()));
+		(new Dispatcher())->dispatch($environment->reveal(), $endPoint->reveal());
 	}
 
 	public function testDispatchAllowsForAbort()
@@ -117,7 +117,7 @@ class DispatcherTest extends ProphecyTestCase
 		$endPoint = $this->prophesize('Razor\EndPoint');
 		$endPoint->get()->willReturn($func);
 
-		(new Dispatcher($environment->reveal(), $endPoint->reveal()));
+		(new Dispatcher())->dispatch($environment->reveal(), $endPoint->reveal());
 	}
 
 	public function testDispatchSetsInjectorOnMiddlewarePriorToInvocation()
@@ -139,7 +139,7 @@ class DispatcherTest extends ProphecyTestCase
 		$endPoint = $this->prophesize('Razor\EndPoint');
 		$endPoint->get()->willReturn($middleware);
 
-		(new Dispatcher($environment->reveal(), $endPoint->reveal()));
+		(new Dispatcher())->dispatch($environment->reveal(), $endPoint->reveal());
 	}
 
 	public function testDispatchSetsInjectorOnErrorMiddlewarePriorToInvocation()
@@ -163,7 +163,29 @@ class DispatcherTest extends ProphecyTestCase
 		$endPoint->get()->willReturn(function () use ($response) { throw new \Exception(); });
 		$endPoint->onError()->willReturn($middleware);
 
-		(new Dispatcher($environment->reveal(), $endPoint->reveal()));
+		(new Dispatcher())->dispatch($environment->reveal(), $endPoint->reveal());
+	}
+
+	public function testDispatchCallsEndPointMethodVirtually()
+	{
+		$resolver = new RegisterResolver();
+		$resolver->register("request", Request::create("/blah.php"));
+
+		$environment = $this->prophesize('Razor\Environment');
+		$environment->testing = false;
+		$environment->services()->willReturn($resolver);
+
+		$response = $this->prophesize('Symfony\Component\HttpFoundation\Response');
+		$response->send()->shouldNotBeCalled();
+
+		$func = function () use ($response) { return $response->reveal(); };
+
+		$endPoint = $this->prophesize('Razor\EndPoint');
+		$endPoint->get()->willReturn($func);
+
+		$return = (new Dispatcher())->dispatch($environment->reveal(), $endPoint->reveal(), true);
+
+		$this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $return);
 	}
 }
  

@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class Dispatcher
 {
-	public function __construct(Environment $environment, EndPoint $endPoint)
+	public function dispatch(Environment $environment, EndPoint $endPoint, $virtual = false)
 	{
 		// Do not dispatch when testing
 		if ($environment->testing) {
@@ -37,9 +37,11 @@ class Dispatcher
 			$resp = $this->dispatchError($injector, $endPoint, $environment, $ex);
 		}
 
-		if ($resp instanceof Response) {
+		if (!$virtual && $resp instanceof Response) {
 			$resp->send();
 		}
+
+		return $resp;
 	}
 
 	/**

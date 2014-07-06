@@ -45,6 +45,6 @@ class Razor
 	{
 		static::$endPoint = $endPoint;
 
-		(new Dispatcher(static::environment(), $endPoint));
+		(new Dispatcher())->dispatch(static::environment(), $endPoint);
 	}
 }

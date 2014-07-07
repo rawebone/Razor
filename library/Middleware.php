@@ -27,8 +27,12 @@ class Middleware
 	 */
 	protected $injector;
 
-	public function __construct(callable $delegate)
+	public function __construct($delegate)
 	{
+        if (!is_callable($delegate)) {
+            throw new \InvalidArgumentException("Argument passed to " . __CLASS__ . " middleware is not callable");
+        }
+
 		$this->delegate = $delegate;
 	}
 

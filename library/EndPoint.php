@@ -12,8 +12,6 @@ use Razor\Services\Http;
  */
 class EndPoint
 {
-	use FluentPropertySetter;
-
 	protected $onError;
 	protected $onNotFound;
 	protected $get;
@@ -36,43 +34,59 @@ class EndPoint
 		});
 	}
 
-	public function get(callable $delegate = null)
+	public function get($delegate = null)
 	{
+        $this->checkCallable($delegate);
+
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function post(callable $delegate = null)
 	{
+        $this->checkCallable($delegate);
+
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function delete(callable $delegate = null)
 	{
+        $this->checkCallable($delegate);
+
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function patch(callable $delegate = null)
 	{
+        $this->checkCallable($delegate);
+
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function head(callable $delegate = null)
 	{
+        $this->checkCallable($delegate);
+
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function options(callable $delegate = null)
 	{
+        $this->checkCallable($delegate);
+
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function onError(callable $delegate = null)
 	{
+        $this->checkCallable($delegate);
+
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
 	public function onNotFound(callable $delegate = null)
 	{
+        $this->checkCallable($delegate);
+
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
@@ -85,4 +99,21 @@ class EndPoint
 	{
 		return new static();
 	}
+
+    protected function setOrReturn($property, $value = null)
+    {
+        if ($value === null) {
+            return $this->$property;
+        } else {
+            $this->$property = $value;
+            return $this;
+        }
+    }
+
+    protected function checkCallable($delegate)
+    {
+        if ($delegate !== null && !is_callable($delegate)) {
+            throw new \InvalidArgumentException("Passed delegate is not callable!");
+        }
+    }
 }

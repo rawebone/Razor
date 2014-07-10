@@ -54,7 +54,7 @@ class Dispatcher
 	{
 		$injector = new Injector();
 		$injector->resolver($environment->services());
-		$environment->services()->register("injector", $injector);
+		$environment->services()->register("injector", function () use ($injector) { return $injector; });
 
 		return $injector;
 	}

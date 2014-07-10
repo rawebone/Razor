@@ -92,7 +92,7 @@ class Dispatcher
 	 */
 	protected function dispatchError(Injector $injector, EndPoint $endPoint, Environment $environment, \Exception $exception)
 	{
-		$environment->services()->register("exception", $exception);
+        $environment->services()->register("exception", function () use ($exception) { return $exception; });
 
 		$errorHandler = $endPoint->onError();
 

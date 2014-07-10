@@ -32,9 +32,11 @@ class Environment
 
 	protected function setupServices()
 	{
+        $self = $this;
+
 		// Save the environment instance for use by
 		// some of the framework services.
-		$this->services->register("razor", $this);
+		$this->services->register("razor", function () use ($self) { return $self; });
 
 		$this->services->register("request", function ()
 		{

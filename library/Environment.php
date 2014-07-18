@@ -34,7 +34,7 @@ class Environment
 	{
 		// Save the environment instance for use by
 		// some of the framework services.
-		$this->services->register("razor", $this);
+		$this->services->registerObject("razor", $this);
 
 		$this->services->register("request", function ()
 		{

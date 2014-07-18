@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "rawebone/injector",
-            "version": "1.0.1",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rawebone/Injector.git",
-                "reference": "ced78616456ca4fcb130c0879c81766148791021"
+                "reference": "a3a8ef90f4df92686fd502dbc1d423f40a57bff3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rawebone/Injector/zipball/ced78616456ca4fcb130c0879c81766148791021",
-                "reference": "ced78616456ca4fcb130c0879c81766148791021",
+                "url": "https://api.github.com/repos/rawebone/Injector/zipball/a3a8ef90f4df92686fd502dbc1d423f40a57bff3",
+                "reference": "a3a8ef90f4df92686fd502dbc1d423f40a57bff3",
                 "shasum": ""
             },
             "require-dev": {
@@ -47,21 +47,21 @@
                 }
             ],
             "description": "A library providing a low level service injection API",
-            "time": "2014-07-05 11:16:20"
+            "time": "2014-07-13 19:51:07"
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v2.4.6",
+            "version": "v2.4.7",
             "target-dir": "Symfony/Component/HttpFoundation",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpFoundation.git",
-                "reference": "138498f3d64981cfafcb5eec3b2b96fce44a178e"
+                "reference": "6556e6aaa5ca78206c28281534044838acca7741"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/138498f3d64981cfafcb5eec3b2b96fce44a178e",
-                "reference": "138498f3d64981cfafcb5eec3b2b96fce44a178e",
+                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/6556e6aaa5ca78206c28281534044838acca7741",
+                "reference": "6556e6aaa5ca78206c28281534044838acca7741",
                 "shasum": ""
             },
             "require": {
@@ -102,7 +102,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "http://symfony.com",
-            "time": "2014-05-22 16:21:00"
+            "time": "2014-07-08 11:46:35"
         }
     ],
     "packages-dev": [
@@ -860,17 +860,17 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.5.0",
+            "version": "v2.5.1",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "b4b09c68ec2f2727574544ef0173684281a5033c"
+                "reference": "1057e87364c0b38b50f5695fc9df9dd189036bec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/b4b09c68ec2f2727574544ef0173684281a5033c",
-                "reference": "b4b09c68ec2f2727574544ef0173684281a5033c",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/1057e87364c0b38b50f5695fc9df9dd189036bec",
+                "reference": "1057e87364c0b38b50f5695fc9df9dd189036bec",
                 "shasum": ""
             },
             "require": {
@@ -905,7 +905,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2014-05-16 14:25:18"
+            "time": "2014-07-08 12:21:33"
         }
     ],
     "aliases": [

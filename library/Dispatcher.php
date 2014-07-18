@@ -54,7 +54,7 @@ class Dispatcher
 	{
 		$injector = new Injector();
 		$injector->resolver($environment->services());
-		$environment->services()->register("injector", $injector);
+		$environment->services()->registerObject("injector", $injector);
 
 		return $injector;
 	}
@@ -92,7 +92,7 @@ class Dispatcher
 	 */
 	protected function dispatchError(Injector $injector, EndPoint $endPoint, Environment $environment, \Exception $exception)
 	{
-		$environment->services()->register("exception", $exception);
+		$environment->services()->registerObject("exception", $exception);
 
 		$errorHandler = $endPoint->onError();
 

@@ -15,7 +15,9 @@
         bootstrap="tests/bootstrap.php">
 
     <testsuites>
-        <testsuite name="Razor Tests">tests/</testsuite>
+        <testsuite name="Razor Tests">
+            <directory>./tests/</directory>
+        </testsuite>
     </testsuites>
 
 </phpunit>

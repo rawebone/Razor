@@ -2,9 +2,10 @@
 
 namespace Razor\Tests;
 
+use Prophecy\PhpUnit\ProphecyTestCase;
 use Razor\Environment;
 
-class EnvironmentTest extends \PHPUnit_Framework_TestCase
+class EnvironmentTest extends ProphecyTestCase
 {
 	public function testDefaults()
 	{
@@ -19,6 +20,17 @@ class EnvironmentTest extends \PHPUnit_Framework_TestCase
 		$env = new Environment();
 
 		$this->assertInstanceOf('Rawebone\Injector\RegisterResolver', $env->services());
+	}
+
+	public function testProviderRegistration()
+	{
+		$env = new Environment();
+
+		$provider = $this->prophesize('Razor\Provider');
+		$provider->letResolverBe($env->services())->shouldBeCalled();
+		$provider->register()->shouldBeCalled();
+
+		$env->registerProvider($provider->reveal());
 	}
 }
  

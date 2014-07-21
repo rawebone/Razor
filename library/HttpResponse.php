@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class HttpResponse
 {
-	public function standard($contents = "", $status = 200, array $headers = [])
+	public function standard($contents = "", $status = 200, array $headers = array())
 	{
 		return new Response($contents, $status, $headers);
 	}

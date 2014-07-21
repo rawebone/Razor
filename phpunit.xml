@@ -1,21 +1,21 @@
 <?xml version="1.0" ?>
-<phpunit
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.1/phpunit.xsd"
-        colors="true"
-        convertErrorsToExceptions="true"
-        convertNoticesToExceptions="true"
-        convertWarningsToExceptions="true"
-        forceCoversAnnotation="false"
-        processIsolation="false"
-        stopOnError="true"
-        stopOnFailure="true"
-        strict="false"
-        verbose="false"
-        bootstrap="tests/bootstrap.php">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/4.1/phpunit.xsd"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         forceCoversAnnotation="false"
+         processIsolation="false"
+         stopOnError="true"
+         stopOnFailure="true"
+         strict="false"
+         verbose="false"
+         bootstrap="tests/bootstrap.php">
 
     <testsuites>
-        <testsuite name="Razor Tests">tests/</testsuite>
+        <testsuite name="Razor Tests">
+            <directory>./tests/</directory>
+        </testsuite>
     </testsuites>
-
 </phpunit>

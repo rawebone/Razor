@@ -41,49 +41,49 @@ class EndPoint
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
-	public function post(callable $delegate = null)
+	public function post($delegate = null)
 	{
         $this->checkCallable($delegate);
 
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
-	public function delete(callable $delegate = null)
+	public function delete($delegate = null)
 	{
         $this->checkCallable($delegate);
 
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
-	public function patch(callable $delegate = null)
+	public function patch($delegate = null)
 	{
         $this->checkCallable($delegate);
 
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
-	public function head(callable $delegate = null)
+	public function head($delegate = null)
 	{
         $this->checkCallable($delegate);
 
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
-	public function options(callable $delegate = null)
+	public function options($delegate = null)
 	{
         $this->checkCallable($delegate);
 
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
-	public function onError(callable $delegate = null)
+	public function onError($delegate = null)
 	{
         $this->checkCallable($delegate);
 
 		return $this->setOrReturn(__FUNCTION__, $delegate);
 	}
 
-	public function onNotFound(callable $delegate = null)
+	public function onNotFound($delegate = null)
 	{
         $this->checkCallable($delegate);
 

@@ -26,7 +26,7 @@ class DispatcherTest extends ProphecyTestCase
 	public function testDispatchCallsEndPointMethod()
 	{
 		$resolver = new RegisterResolver();
-		$resolver->register("request", Request::create("/blah.php"));
+		$resolver->registerObject("request", Request::create("/blah.php"));
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;
@@ -47,7 +47,7 @@ class DispatcherTest extends ProphecyTestCase
 	public function testDispatchCallsNotFound()
 	{
 		$resolver = new RegisterResolver();
-		$resolver->register("request", Request::create("/blah.php", "MKCOL"));
+		$resolver->registerObject("request", Request::create("/blah.php", "MKCOL"));
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;
@@ -68,7 +68,7 @@ class DispatcherTest extends ProphecyTestCase
 	public function testDispatchCallsOnError()
 	{
 		$resolver = new RegisterResolver();
-		$resolver->register("request", Request::create("/blah.php"));
+		$resolver->registerObject("request", Request::create("/blah.php"));
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;
@@ -94,7 +94,7 @@ class DispatcherTest extends ProphecyTestCase
 	public function testDispatchThrowsException()
 	{
 		$resolver = new RegisterResolver();
-		$resolver->register("request", Request::create("/blah.php"));
+		$resolver->registerObject("request", Request::create("/blah.php"));
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;
@@ -111,7 +111,7 @@ class DispatcherTest extends ProphecyTestCase
 	public function testDispatchAllowsForAbort()
 	{
 		$resolver = new RegisterResolver();
-		$resolver->register("request", Request::create("/blah.php"));
+		$resolver->registerObject("request", Request::create("/blah.php"));
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;
@@ -129,7 +129,7 @@ class DispatcherTest extends ProphecyTestCase
 	public function testDispatchSetsInjectorOnMiddlewarePriorToInvocation()
 	{
 		$resolver = new RegisterResolver();
-		$resolver->register("request", Request::create("/blah.php"));
+		$resolver->registerObject("request", Request::create("/blah.php"));
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;
@@ -152,7 +152,7 @@ class DispatcherTest extends ProphecyTestCase
 	public function testDispatchSetsInjectorOnErrorMiddlewarePriorToInvocation()
 	{
 		$resolver = new RegisterResolver();
-		$resolver->register("request", Request::create("/blah.php"));
+		$resolver->registerObject("request", Request::create("/blah.php"));
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;
@@ -177,7 +177,7 @@ class DispatcherTest extends ProphecyTestCase
 	public function testDispatchCallsEndPointMethodVirtually()
 	{
 		$resolver = new RegisterResolver();
-		$resolver->register("request", Request::create("/blah.php"));
+		$resolver->registerObject("request", Request::create("/blah.php"));
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;

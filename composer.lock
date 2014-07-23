@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "30f8e078d2d61fb6f42295dfe7f9a2e1",
+    "hash": "91ed2f1b9526937696057fb8bb7b911e",
     "packages": [
         {
             "name": "rawebone/injector",
@@ -106,6 +106,35 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "braincrafted/json",
+            "version": "v0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/braincrafted/json.git",
+                "reference": "fa469b17e4badc29516b0deab255a937876e589c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/braincrafted/json/zipball/fa469b17e4badc29516b0deab255a937876e589c",
+                "reference": "fa469b17e4badc29516b0deab255a937876e589c",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.x"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Braincrafted\\Json": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "time": "2013-11-15 19:16:34"
+        },
         {
             "name": "phpdocumentor/reflection-docblock",
             "version": "2.0.2",

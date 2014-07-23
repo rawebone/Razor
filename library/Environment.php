@@ -30,6 +30,17 @@ class Environment
 		return $this->services;
 	}
 
+	/**
+	 * Registers a service provider with the Environment.
+	 *
+	 * @param Provider $provider
+	 */
+	public function registerProvider(Provider $provider)
+	{
+		$provider->letResolverBe($this->services);
+		$provider->register();
+	}
+
 	protected function setupServices()
 	{
 		// Save the environment instance for use by

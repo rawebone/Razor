@@ -1,234 +1,212 @@
 # Razor
 
-Razor is a simple REST micro framework based somewhat on [Slim](http://www.slimframework.com)
-and [Silex](http://silex.sensiolabs.org/) but designed to provide more straight-forward
-syntax and testing. This documentation is still in progress, but the API is pretty-well
-commented so should provide enough to delve right into.
+Razor is a lightweight micro framework based around the concept of REST. It
+is similar to a number of projects like [Slim](http://www.slimframework.com)
+and [Silex](http://silex.sensiolabs.org/) but is designed to be syntactically
+nicer to use, from personal preference.
 
+As noted above the framework is focused around RESTful web applications. Lets
+say we are working on the obligatory TODO application- we are going to have
+an *end point* in our API that represents the collection of TODO items or,
+more correctly, *resources*.
 
-## Philosophy
-
-### 1. Front controllers cause unnecessary complexity
-
-This is because you have to setup a routing system, configure web servers
-and abstract logic into other files. When designing we need the least complications
-getting in the way of our creativity, and as such having as much of the logic of
-the request handling in the file requested is best.
-
-
-### 2. Service Location should be simple
-
-Razor is built upon the ideas of Service Location and Dependency Injection. Like Silex
-and Slim the framework exposes a Service Container which allows us to lazily provide
-object instances to our application. Unlike these frameworks, these services can actually
-be *injected* into our logic as opposed to being pulled into our logic:
-
-```php
-
-// Other SL based frameworks
-
-$framework->container()->service("name", function () { return new MyService(); });
-$framework-get(function () use ($framework) { $framework->container()->get("name")->blah(); }));
-
-// Razor
-
-$environment->services()->register("name", function () { return new MyService(); });
-(new EndPoint())->get(function (MyService $name) { $name->blah() });
-
-```
-
-This allows us to be more concise in our coding and testing. The methodology
-is similar to that present in AngularJS.
-
-
-### 3. Brevity always wins
-
-If there is a way we can make our code easier to write and read, we should take it
-even if that means making the framework have to work harder or engage in otherwise
-*bad practice* like global state - we just have to do it better.
-
-
-### 4. The least we can do, the better
-
-You need to be able to trust the code you work with, as such I've tried to keep
-the functionality to a minimum so that it can be easily assessed. It also means
-that the framework should have less issues with security.
-
-
-## Basic Usage
-
-Like the other micro frameworks sighted above, Razor follows the traditions of Middleware
-and HTTP Verb mapping to achieve simple solutions to web problems. Unlike other solutions,
-Razor **does not** use any kind of routing. This is because I am primarily using it for
-my own RESTful needs and as such there is really no difference to me between `/api/endpoint.php`
-and `/api/endpoint/` to justify building in a more complex system. That being said it should
-be permissive enough for using with a router by simply using includes with a system like
-Klien et al.
-
-Because there is no router, the page itself becomes the "controller" and can have various
-different operations handled inside of it. Controller is in the old inverted commas as
-really, speaking again from REST, they are more correctly known in Razor parlance as
-End Points. As such, the most basic of applications in the framework is:
+To model this in Razor, we would create a file in our web-facing folder called
+`todos.php` which would contain the following code:
 
 ```php
 <?php
 
-// File: public/index.php
+// File: todos.php
 
-require_once(__DIR__ . "/../vendor/autoload.php");
+require_once "/path/to/vendor/autoload.php";
 
 use Razor\EndPoint;
 
-(new EndPoint()) // EndPoint::create() on PHP <=5.5
+(new EndPoint())
+
+    ->run();
+
+```
+
+We can think of this file as our *resource collection*; i.e. if we want to add,
+edit, get, or remove items TODO items then that change comes through this file.
+Razor is geared towards this mindset and so all the logic pertaining to a resource
+is encapsulated in the `EndPoint` object. To be able to perform actions against
+our resource we have to *assign a delegate into a slot representing the HTTP
+request method*, or more simply:
+
+```php
+<?php
+
+// File: todos.php
+
+require_once "/path/to/vendor/autoload.php";
+
+use Razor\EndPoint;
+
+(new EndPoint())
 
     ->get(function ()
     {
-        echo "Hello, World!";
+        // Hey, that was easy!
     })
 
     ->run();
 
 ```
 
-In this example, when the index page of our application is requested, an `EndPoint`
-object will be configured to echo "Hello, World!" when the request is made with the
-`GET` HTTP verb. This configured `EndPoint` is then run against the request by the call
-to `run()`.
+Anyone used to the format of other micro-frameworks should recognise this
+syntax. Essentially, in the instance that the web browser makes an HTTP
+GET request, the code in the delegate (or Closure) is invoked. There are
+method calls for each of the major HTTP Verbs, and more may be supported
+in the future.
 
-The `EndPoint` object accounts for most of the basic HTTP Verbs, but should you need more
-you can simply create an extension from the EndPoint object to suit your own needs. There
-is not uber fancy handling at work in the background.
-
-Our `EndPoint` can also specify handlers to be invoked in two special circumstances:
+Great! So our client can access our `todo.php` page from a browser and they
+see... Nothing. Lets fix that by sending the browser a message:
 
 ```php
+<?php
+
+// File: todos.php
+
+require_once "/path/to/vendor/autoload.php";
+
+use Razor\EndPoint;
+use Razor\Services\Http;
 
 (new EndPoint())
 
-    // This will be invoked when an error occurs in processing of the current method
-    ->onError(function ()
+    ->get(function (Http $http)
     {
-
+        return $http->response->standard("Hello, world!");
     })
 
-    // This will be called when the HTTP Method is not backed by a delegate
-    ->onNotFound(function ()
-    {
-
-    });
+    ->run();
 
 ```
 
-These are defaulted to provide appropriate server responses and can be overridden as
-shown above on a per-end point basis. If you need to add in specific, global handling
-you should extend the `EndPoint` object, and overload the `__construct()` method.
+Now when the client connects they will get the message `Hello, world!`. You
+may have noticed that you didn't have to specify that the `$http` object
+exists anywhere in this file and that it has been passed through as an argument
+to the delegate. What is happening here is called Service Injection.
 
-
-## Beyond The Basics
-
-## The Environment
-
-Razor provides a system for configuring runtime behaviour via the `Environment` object:
+A service is an object or value that provides some functionality to your
+application. When Razor decides to invoke the delegate for the HTTP GET request,
+it examines the arguments that are specified and looks to see if it can
+provide them. If it can, it then *injects* those arguments when the delegate
+is invoked. If you have an AngularJS background this will seem native to you,
+if not then this may feel a little foreign. The goal is to make your delegate
+stateless, i.e. not this:
 
 ```php
 <?php
 
-// File: bootstrap.php
+// File: todos.php
 
-use Razor\Environment;
-use Razor\Razor;
+require_once "/path/to/vendor/autoload.php";
 
-$environment = new Environment();
+use Razor\EndPoint;
+use Razor\Services\Http;
 
-// This prevents the framework from catching exceptions
-// raised during execution of an HTTP Verb delegate.
-
-// True by default
-$environment->development = false;
-
-// This option prevents the framework from dispatching
-// full-stop, see later on with regards to testing.
-
-// False by default
-$environment->testing = false;
-
-
-// You register your environment through the Razor class:
-Razor::environment($environment);
-
-```
-
-
-### Services
-
-Razor ships with a Service Injection system. If you've seen container systems
-like Pimple before, think that but with those service names injected for you:
-
-```php
-<?php
-
-// File: bootstrap.php
-
-use Razor\Environment;
-use Razor\Razor;
-
-
-$environment = new Environment();
-$services = $environment->services();
-
-$services->register("service", function ()
-{
-    return new MyService();
-});
-
-$services->registerMany([
-    "aardvark" => new sdtClass(),
-
-    "silly" => function () { return new SillyService(); }
-]);
-
-Razor::environment($environment);
-
-```
-
-```php
-<?php
-
-// File: index.php
-
-
-// ...
+$http = new Http(/* Have to supply all the arguments here ... */);
 
 (new EndPoint())
 
-    ->get(function (MyService $service)
+    ->get(function () use ($http)
     {
-        $service->callSomething();
-    });
+        return $http->response->standard("Hello, world!");
+    })
 
-// ...
+    ->run();
 
 ```
 
-This allows us to reduce code bloat in our application quite nicely and keep
-everything readable. Services have to be registered with the Environment in
-order for the application to work effectively. The important thing here is
-the name of the parameter -- "service" in this case -- as it allows us to
-find the object we need in the container. Types are checked for safety.
+This is because, firstly, you always have to create the object or write
+quite ugly code to lazy load it, secondly because `function () use (...)` is
+really terse, ugly and becomes difficult to maintain over time and, thirdly,
+because it makes testing this code nearly impossible, or at the very least
+impossible to test in isolation. As such we can let the framework handle the
+ugly bits and not let it get in the way of our design.
 
-A basic service call `http` is included which provides a wrapper over the
-Symfony HttpFoundation. You can see this API in the `Razor\Services\Http`
-object.
+In this particular instance, `$http` is a service that Razor ships with, but
+you can use services for your own code too. Say we have an object already that
+handles the management of a todo's database, we can specify it in our code as
+follows:
 
+```php
+<?php
 
-### Middleware
+// File: todos.php
 
-Razor ships with a middleware solution, built on-top of the Service
-injection system. The goal of middleware is to provide small, generic
-handling to problems and can be conceived of as being like the layers
-of an onion - you invoke a middleware, and it then performs an action,
-calling the next middleware in the chain.
+require_once "/path/to/vendor/autoload.php";
 
+use Razor\Razor;
+use Razor\EndPoint;
+use Razor\Services\Http;
+
+Razor::environment()
+     ->services()
+     ->register("todoRepo", function ()
+     {
+        return new TodoRepo(/* ... */);
+     });
+
+(new EndPoint())
+
+    ->get(function (Http $http, TodoRepo $todoRepo)
+    {
+        $id = $http->request->get("id");
+
+        $data = $todoRepo->get($id);
+
+        return $http->response->json($data);
+    })
+
+    ->run();
+
+```
+
+Here we register the service with the frameworks `Environment` using a delegate.
+Then in our code, we specify this service as a dependency. **It is important to
+note that it is the name `todoRepo` that is used to find the service and not the
+type hint**. This is because we may end up with multiple objects with the same
+type needing to be injected, like different log objects that both use the same
+API.
+
+Also important to note is that this delegate can also receive injected services,
+like:
+
+```php
+
+Razor::environment()
+     ->services()
+     ->registerMany(array(
+         "conn", function ()
+         {
+            return new PDO(/* ... */);
+         },
+
+         "todoRepo", function (PDO $conn)
+         {
+            return new TodoRepo($conn);
+         }
+     ));
+
+```
+
+*N.B. It is suggested that you move these service registrations to a
+`bootstrap.php` file so that as your application grows you can keep
+on top of it.*
+
+Lets say you want to open this app out onto the web, but you want to
+make sure you have some security in place. You could expose a service to
+handle this, but that will undoubtedly lead to lots of boilerplate. As
+such the framework ships with the well known idea of *Middleware*.
+
+A Middleware is a small object which is designed to be called before your
+delegate, and perform request filtering or response amendments. This means
+you can write small pieces of functionality and compose your handling from
+this. An example of a middleware is:
 
 ```php
 
@@ -251,89 +229,103 @@ class SecurityMiddleware extends Middleware
 
 ```
 
-This example allows us to do basic filtering and handling on a per HTTP verb delegate
-basis:
-
-
-```php
-
-// File: public/index.php
-
-// ...
-
-(new EndPoint())
-
-    ->get(function ()
-    {
-        // Secure, insecure - who cares?
-    })
-
-    ->post(new SecurityMiddleware(function()
-    {
-        // This is a secure connection
-    });
-
-// ...
-
-```
-
-Middleware can also be used to wrap the target, say for exception handling
-or the like. We could also use this for firewalling or logging access. The
-sky is the limit. Middleware can also wrap Middleware:
-
-```php
-
-// File: public/index.php
-
-// ...
-
-(new EndPoint())
-
-    ->get(new Middleware1(new Middleware2(function ()
-    {
-
-    })));
-
-```
-
-
-### Responses
-
-The framework is designed to take some of the boilerplate out of your
-coding, and part of this is in the way it handles responses. This also
-impacts upon testability of your application and, unless absolutely
-necessary, is the way you should write your code using the framework:
+We can then utilise the `SecurityMiddleware` by:
 
 ```php
 <?php
 
-// File: public/my_response.php
+// File: todos.php
 
-// ...
+require_once "/path/to/vendor/autoload.php";
+
+use Razor\EndPoint;
+use Razor\Services\Http;
 
 (new EndPoint())
 
-    ->get(function (Http $http)
+    ->get(new SecurityMiddleware(function (Http $http, TodoRepo $todoRepo)
     {
-        return $http->response->standard("Hello, World!");
+        $id = $http->request->get("id");
 
-        // as opposed to:
+        $data = $todoRepo->get($id);
 
-        $http->response->standard("Hello, World!")->send();
-    });
+        return $http->response->json($data);
+    }))
 
-
-// ...
+    ->run();
 
 ```
 
-This allows you to test that the generated response is valid.
+As such the `SecurityMiddleware` will be called first and if the connection
+is secure it will then invoke our application logic for the `GET` request.
+We can also chain middleware together:
 
-### Testing
+```php
+<?php
 
-TODO
+// File: todos.php
+
+require_once "/path/to/vendor/autoload.php";
+
+use Razor\EndPoint;
+use Razor\Services\Http;
+
+(new EndPoint())
+
+    ->get(new SecurityMiddleware(new EnsureJsonMiddleware(function (Http $http, TodoRepo $todoRepo)
+    {
+        $id = $http->request->get("id");
+
+        $data = $todoRepo->get($id);
+
+        return $http->response->json($data);
+    })))
+
+    ->run();
+
+```
+
+
+## About Razor
+
+The framework is designed to be developer friendly. You want to write well
+structured code, but you also need to provide justification for every line
+of code in your project? Razor is as lightweight as possible, using a simple
+API for [Service Injection](https://github.com/rawebone/Injector) and the
+well trusted Symfony HTTP Foundation library in it's HTTP Service.
+
+You want to write code that is easily maintainable? Services allow you to
+keep your shared logic accessible without the need for excessive boilerplate
+in your application logic. Keep your application logic in the URL end points
+so you can easily identify what is going on.
+
+Overall, Razor is designed to give you an elegant way of working with HTTP
+requests without bloat. If it fits your work flow, then more power to you!
+
+
+## Installation
+
+Installation is via [Composer](https://getcomposer.org), add Razor to your
+dependencies:
+
+```json
+{
+    "require": {
+        "rawebone/razor-library": "dev-master"
+    }
+}
+```
+
+Once the project goes to stable, there will be two branches available for
+installation:
+
+* 1.x.y
+* 1.x.y-compat
+
+The `compat` branch will allow users of PHP5.3 and above to use the framework
+while the main branch will be PHP5.4 and above.
+
 
 ## License
 
 [MIT License](LICENSE), go wild.
-

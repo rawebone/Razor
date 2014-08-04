@@ -25,14 +25,17 @@ class DispatcherTest extends ProphecyTestCase
 
 	public function testDispatchCallsEndPointMethod()
 	{
+		$request = Request::create("/blah.php");
+
 		$resolver = new RegisterResolver();
-		$resolver->registerObject("request", Request::create("/blah.php"));
+		$resolver->registerObject("request", $request);
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;
 		$environment->services()->willReturn($resolver);
 
 		$response = $this->prophesize('Symfony\Component\HttpFoundation\Response');
+		$response->prepare($request)->shouldBeCalled();
 		$response->send()->shouldBeCalled();
 
 		$func = function () use ($response) { return $response->reveal(); };
@@ -46,14 +49,17 @@ class DispatcherTest extends ProphecyTestCase
 
 	public function testDispatchCallsNotFound()
 	{
+		$request = Request::create("/blah.php", "MKCOL");
+
 		$resolver = new RegisterResolver();
-		$resolver->registerObject("request", Request::create("/blah.php", "MKCOL"));
+		$resolver->registerObject("request", $request);
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;
 		$environment->services()->willReturn($resolver);
 
 		$response = $this->prophesize('Symfony\Component\HttpFoundation\Response');
+		$response->prepare($request)->shouldBeCalled();
 		$response->send()->shouldBeCalled();
 
 		$func = function () use ($response) { return $response->reveal(); };
@@ -67,8 +73,10 @@ class DispatcherTest extends ProphecyTestCase
 
 	public function testDispatchCallsOnError()
 	{
+		$request = Request::create("/blah.php");
+
 		$resolver = new RegisterResolver();
-		$resolver->registerObject("request", Request::create("/blah.php"));
+		$resolver->registerObject("request", $request);
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;
@@ -76,6 +84,7 @@ class DispatcherTest extends ProphecyTestCase
 		$environment->services()->willReturn($resolver);
 
 		$response = $this->prophesize('Symfony\Component\HttpFoundation\Response');
+		$response->prepare($request)->shouldBeCalled();
 		$response->send()->shouldBeCalled();
 
 		$func = function () use ($response) { return $response->reveal(); };
@@ -128,14 +137,17 @@ class DispatcherTest extends ProphecyTestCase
 
 	public function testDispatchSetsInjectorOnMiddlewarePriorToInvocation()
 	{
+		$request = Request::create("/blah.php");
+
 		$resolver = new RegisterResolver();
-		$resolver->registerObject("request", Request::create("/blah.php"));
+		$resolver->registerObject("request", $request);
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;
 		$environment->services()->willReturn($resolver);
 
 		$response = $this->prophesize('Symfony\Component\HttpFoundation\Response');
+		$response->prepare($request)->shouldBeCalled();
 		$response->send()->shouldBeCalled();
 
 		$middleware = $this->prophesize('Razor\Middleware');
@@ -151,8 +163,10 @@ class DispatcherTest extends ProphecyTestCase
 
 	public function testDispatchSetsInjectorOnErrorMiddlewarePriorToInvocation()
 	{
+		$request = Request::create("/blah.php");
+
 		$resolver = new RegisterResolver();
-		$resolver->registerObject("request", Request::create("/blah.php"));
+		$resolver->registerObject("request", $request);
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;
@@ -160,6 +174,7 @@ class DispatcherTest extends ProphecyTestCase
 		$environment->services()->willReturn($resolver);
 
 		$response = $this->prophesize('Symfony\Component\HttpFoundation\Response');
+		$response->prepare($request)->shouldBeCalled();
 		$response->send()->shouldBeCalled();
 
 		$middleware = $this->prophesize('Razor\Middleware');
@@ -176,14 +191,17 @@ class DispatcherTest extends ProphecyTestCase
 
 	public function testDispatchCallsEndPointMethodVirtually()
 	{
+		$request = Request::create("/blah.php");
+
 		$resolver = new RegisterResolver();
-		$resolver->registerObject("request", Request::create("/blah.php"));
+		$resolver->registerObject("request", $request);
 
 		$environment = $this->prophesize('Razor\Environment');
 		$environment->testing = false;
 		$environment->services()->willReturn($resolver);
 
 		$response = $this->prophesize('Symfony\Component\HttpFoundation\Response');
+		$response->prepare($request)->shouldNotBeCalled();
 		$response->send()->shouldNotBeCalled();
 
 		$func = function () use ($response) { return $response->reveal(); };

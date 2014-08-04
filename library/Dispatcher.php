@@ -20,6 +20,7 @@ class Dispatcher
 		}
 
 		$injector = $this->makeInjectorInstance($environment);
+		$request  = $injector->service("request");
 
 		try {
 			$resp = $this->dispatchMethod($injector, $endPoint);
@@ -38,6 +39,7 @@ class Dispatcher
 		}
 
 		if (!$virtual && $resp instanceof Response) {
+			$resp->prepare($request);
 			$resp->send();
 		}
 

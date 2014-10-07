@@ -1,6 +1,7 @@
 {
-    "name": "rawebone/razor-library",
-    "description": "Provides the core Razor handling",
+    "name": "rawebone/razor",
+    "description": "Razor is a small HTTP micro-framework",
+    "tags": [ "http", "psr-7", "ioc", "micro", "framework", "small" ],
     "minimum-stability": "stable",
     "license": "MIT",
     "authors": [
@@ -16,16 +17,12 @@
         }
     },
     "require": {
-        "php": ">=5.4",
-        "rawebone/injector": "1.*",
-        "symfony/http-foundation": "2.4.*"
+        "php": ">=5.3",
+        "psr/http-message": "0.2.*"
     },
     "require-dev": {
         "phpunit/phpunit": "4.1.*",
         "phpspec/prophecy-phpunit": "v1.0.1",
-        "braincrafted/json": "0.2"
-    },
-    "suggest": {
-        "braincrafted/json": "Required if using the JSON Extension"
+        "phly/http": "*"
     }
 }

@@ -52,6 +52,19 @@ class Injector
 	 */
 	public function inject($fn)
 	{
+		return call_user_func_array($fn, $this->dependencies($fn));
+	}
+
+	/**
+	 * Returns the dependencies for a function. These can then be invoked
+	 * with call_user_func_array().
+	 *
+	 * @param callable $fn
+	 * @return array
+	 * @throws \InvalidArgumentException
+	 */
+	public function dependencies($fn)
+	{
 		if (!is_callable($fn)) {
 			throw new \InvalidArgumentException("\$fn is expected to be a callable");
 		}
@@ -61,7 +74,7 @@ class Injector
 			$args[$dependency] = $this->resolve($dependency);
 		}
 
-		return call_user_func_array($fn, $args);
+		return $args;
 	}
 
 	/**

@@ -2,47 +2,19 @@
 
 namespace Razor;
 
-use Rawebone\Injector\RegisterResolver;
+use Razor\Injection\Injector;
 
 /**
- * Provider allows for the registration of services to be packaged, in turn
- * allowing for extensions to be easily dropped into projects.
+ * Provider instances register services with an Injector instance to expose
+ * them to an End Point.
  *
  * @package Razor
  */
-abstract class Provider
+interface Provider
 {
 	/**
-	 * The resolver which should be used to register services.
-	 *
-	 * @var \Rawebone\Injector\RegisterResolver
-	 */
-	private $resolver;
-
-	/**
-	 * Returns the current resolver.
-	 *
-	 * @return RegisterResolver
-	 */
-	public function resolver()
-	{
-		return $this->resolver;
-	}
-
-	/**
-	 * Sets the resolver to be used.
-	 *
-	 * @param RegisterResolver $resolver
-	 */
-	public function letResolverBe(RegisterResolver $resolver)
-	{
-		$this->resolver = $resolver;
-	}
-
-	/**
-	 * Registers the services exposed by the provider.
-	 *
+	 * @param Injector $injector
 	 * @return void
 	 */
-	abstract public function register();
+	function register(Injector $injector);
 }

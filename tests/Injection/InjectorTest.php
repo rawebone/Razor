@@ -118,6 +118,25 @@ class InjectorTest extends ProphecyTestCase
 		$this->assertEquals(true, isset($resolved->extended));
 		$this->assertEquals(2, $resolved->extended);
 	}
+
+	function testResolutionWithInstance()
+	{
+		$injector = new Injector();
+		$injector->instance("name", 2);
+
+		$this->assertEquals(true, $injector->defined("name"));
+		$this->assertEquals(2, $injector->resolve("name"));
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 */
+	function testInstanceRegistrationFails()
+	{
+		$injector = new Injector();
+		$injector->instance("name", 2);
+		$injector->instance("name", 10);
+	}
 }
 
 class TestRequiresForMethodStub

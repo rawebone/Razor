@@ -39,7 +39,7 @@ class Injector
 	 */
 	public function defined($name)
 	{
-		return isset($this->services[$name]);
+		return isset($this->services[$name]) || isset($this->resolved[$name]);
 	}
 
 	/**
@@ -117,6 +117,22 @@ class Injector
 		}
 
 		$this->extensions[$name][] = $fn;
+	}
+
+	/**
+	 * Registers an instance of an object into the resolved cache.
+	 *
+	 * @param string $name
+	 * @param mixed $object
+	 * @throws \InvalidArgumentException
+	 */
+	public function instance($name, $object)
+	{
+		if ($this->defined($name)) {
+			throw new \InvalidArgumentException("'$name' is already registered");
+		}
+
+		$this->resolved[$name] = $object;
 	}
 
 	/**

@@ -84,6 +84,7 @@ class Injector
 	 * @param callable $fn
 	 * @throws \RuntimeException
 	 * @throws \InvalidArgumentException
+	 * @return $this
 	 */
 	public function service($name, $fn)
 	{
@@ -96,6 +97,7 @@ class Injector
 		}
 
 		$this->services[$name] = $fn;
+		return $this;
 	}
 
 	/**
@@ -105,6 +107,7 @@ class Injector
 	 * @param string $name
 	 * @param callable $fn
 	 * @throws \InvalidArgumentException
+	 * @return $this
 	 */
 	public function extend($name, $fn)
 	{
@@ -117,6 +120,7 @@ class Injector
 		}
 
 		$this->extensions[$name][] = $fn;
+		return $this;
 	}
 
 	/**
@@ -133,6 +137,7 @@ class Injector
 		}
 
 		$this->resolved[$name] = $object;
+		return $this;
 	}
 
 	/**

@@ -5,7 +5,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamableInterface;
 
 /**
- * Response class is an implementation of the PSR-7 Response Interface
+ * Response is an implementation of the PSR-7 Response Interface
  * based off of that found in Phly\Http\Response.
  *
  * @link https://github.com/phly/http

@@ -9,7 +9,7 @@ use Razor\Injection\Injector;
  *
  * @package Razor
  */
-class CoreServices implements Provider
+class CoreServices implements ProviderInterface
 {
 	/**
 	 * @param Injector $injector

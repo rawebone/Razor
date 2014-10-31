@@ -95,10 +95,10 @@ class EndPoint
 	/**
 	 * Registers a provider with the Injector.
 	 *
-	 * @param Provider $provider
+	 * @param ProviderInterface $provider
 	 * @return $this
 	 */
-	public function provider(Provider $provider)
+	public function provider(ProviderInterface $provider)
 	{
 		$provider->register($this->injector);
 		return $this;

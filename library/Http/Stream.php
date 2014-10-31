@@ -4,7 +4,7 @@ namespace Razor\Http;
 use Psr\Http\Message\StreamableInterface;
 
 /**
- * Stream class provides an implementation of the PSR-7 StreamableInterface
+ * Stream provides an implementation of the PSR-7 StreamableInterface
  * based off of Phly\Http\Stream.
  *
  * @link https://github.com/phly/http
@@ -18,13 +18,7 @@ class Stream implements StreamableInterface
 
     public function __construct($stream, $mode = "r")
     {
-        if (is_resource($stream)) {
-            $this->resource = $stream;
-        } elseif (is_string($stream)) {
-            $this->resource = fopen($stream, $mode);
-        } else {
-            throw new \InvalidArgumentException("Invalid stream provided; must be a string stream identifier or resource");
-        }
+        $this->attach($stream, $mode);
     }
 
     /**
@@ -34,7 +28,9 @@ class Stream implements StreamableInterface
      */
     public function close()
     {
-        // TODO: Implement close() method.
+        if (($resource = $this->detach())) {
+            fclose($resource);
+        }
     }
 
     /**
@@ -46,7 +42,9 @@ class Stream implements StreamableInterface
      */
     public function detach()
     {
-        // TODO: Implement detach() method.
+        $resource = $this->resource;
+        $this->resource = null;
+        return $resource;
     }
 
     /**
@@ -62,9 +60,15 @@ class Stream implements StreamableInterface
      *
      * @return void
      */
-    public function attach($stream)
+    public function attach($stream, $mode = "r")
     {
-        // TODO: Implement attach() method.
+        if (is_resource($stream)) {
+            $this->resource = $stream;
+        } elseif (is_string($stream)) {
+            $this->resource = fopen($stream, $mode);
+        } else {
+            throw new \InvalidArgumentException("Invalid stream provided; must be a string stream identifier or resource");
+        }
     }
 
     /**
@@ -74,7 +78,7 @@ class Stream implements StreamableInterface
      */
     public function getSize()
     {
-        // TODO: Implement getSize() method.
+        return null;
     }
 
     /**
@@ -84,7 +88,7 @@ class Stream implements StreamableInterface
      */
     public function tell()
     {
-        // TODO: Implement tell() method.
+        return ($this->resource ? ftell($this->resource) : false);
     }
 
     /**
@@ -94,7 +98,7 @@ class Stream implements StreamableInterface
      */
     public function eof()
     {
-        // TODO: Implement eof() method.
+        return ($this->resource ? feof($this->resource) : true);
     }
 
     /**
@@ -104,7 +108,7 @@ class Stream implements StreamableInterface
      */
     public function isSeekable()
     {
-        // TODO: Implement isSeekable() method.
+        return $this->getMetadata("seekable");
     }
 
     /**
@@ -123,7 +127,12 @@ class Stream implements StreamableInterface
      */
     public function seek($offset, $whence = SEEK_SET)
     {
-        // TODO: Implement seek() method.
+        if (!$this->resource || !$this->isSeekable()) {
+            return false;
+        }
+
+        $result = fseek($this->resource, $offset, $whence);
+        return ($result === 0);
     }
 
     /**
@@ -133,7 +142,7 @@ class Stream implements StreamableInterface
      */
     public function isWritable()
     {
-        // TODO: Implement isWritable() method.
+        return is_writable($this->getMetadata("uri"));
     }
 
     /**
@@ -146,7 +155,11 @@ class Stream implements StreamableInterface
      */
     public function write($string)
     {
-        // TODO: Implement write() method.
+        if (!$this->resource) {
+            return false;
+        }
+
+        return fwrite($this->resource, $string);
     }
 
     /**
@@ -156,7 +169,8 @@ class Stream implements StreamableInterface
      */
     public function isReadable()
     {
-        // TODO: Implement isReadable() method.
+        $mode = $this->getMetadata("mode");
+        return (strstr($mode, "r") || strstr($mode, "+"));
     }
 
     /**
@@ -170,7 +184,15 @@ class Stream implements StreamableInterface
      */
     public function read($length)
     {
-        // TODO: Implement read() method.
+        if (!$this->resource || !$this->isReadable()) {
+            return "";
+        }
+
+        if ($this->eof()) {
+            return "";
+        }
+
+        return fread($this->resource, $length);
     }
 
     /**
@@ -180,7 +202,11 @@ class Stream implements StreamableInterface
      */
     public function getContents()
     {
-        // TODO: Implement getContents() method.
+        if (!$this->isReadable()) {
+            return "";
+        }
+
+        return stream_get_contents($this->resource);
     }
 
     /**
@@ -199,11 +225,28 @@ class Stream implements StreamableInterface
      */
     public function getMetadata($key = null)
     {
-        // TODO: Implement getMetadata() method.
+        if (!$this->resource) {
+            return null;
+        }
+
+        if ($key === null) {
+            return stream_get_meta_data($this->resource);
+        }
+
+        $metadata = stream_get_meta_data($this->resource);
+        if (!array_key_exists($key, $metadata)) {
+            return null;
+        }
+
+        return $metadata[$key];
     }
 
     public function __toString()
     {
-        return $this->getContents();
+        if (!$this->isReadable()) {
+            return "";
+        }
+
+        return stream_get_contents($this->resource, -1, 0);
     }
 }

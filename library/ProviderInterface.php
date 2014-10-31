@@ -5,12 +5,12 @@ namespace Razor;
 use Razor\Injection\Injector;
 
 /**
- * Provider instances register services with an Injector instance to expose
+ * ProviderInterface instances register services with an Injector instance to expose
  * them to an End Point.
  *
  * @package Razor
  */
-interface Provider
+interface ProviderInterface
 {
 	/**
 	 * @param Injector $injector

@@ -4,20 +4,20 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b55ae7d55cdb185a40f4872ee16e2288",
+    "hash": "3561a50f7d3c58dd2f942fcb620f3e9d",
     "packages": [
         {
             "name": "psr/http-message",
-            "version": "0.2.0",
+            "version": "0.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-message.git",
-                "reference": "0544bddcd574eab8c14a936288141db58a643dae"
+                "reference": "18619eee10ecf266bafe048e5a2922fa20938498"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-message/zipball/0544bddcd574eab8c14a936288141db58a643dae",
-                "reference": "0544bddcd574eab8c14a936288141db58a643dae",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/18619eee10ecf266bafe048e5a2922fa20938498",
+                "reference": "18619eee10ecf266bafe048e5a2922fa20938498",
                 "shasum": ""
             },
             "type": "library",
@@ -50,7 +50,60 @@
                 "request",
                 "response"
             ],
-            "time": "2014-10-01 16:15:43"
+            "time": "2014-11-04 14:03:01"
+        },
+        {
+            "name": "symfony/http-foundation",
+            "version": "v2.5.6",
+            "target-dir": "Symfony/Component/HttpFoundation",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/HttpFoundation.git",
+                "reference": "56111fc8ba8bcad93d367532babecc6ce17f66ce"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/HttpFoundation/zipball/56111fc8ba8bcad93d367532babecc6ce17f66ce",
+                "reference": "56111fc8ba8bcad93d367532babecc6ce17f66ce",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "symfony/expression-language": "~2.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\HttpFoundation\\": ""
+                },
+                "classmap": [
+                    "Symfony/Component/HttpFoundation/Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                }
+            ],
+            "description": "Symfony HttpFoundation Component",
+            "homepage": "http://symfony.com",
+            "time": "2014-10-24 05:49:22"
         }
     ],
     "packages-dev": [
@@ -110,21 +163,21 @@
         },
         {
             "name": "phly/http",
-            "version": "0.4.2",
+            "version": "0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phly/http.git",
-                "reference": "88eefd773e88d01084283668ae25de29997acf41"
+                "reference": "eacd0c2a075ec3db365d174b9923320dc0786ac7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phly/http/zipball/88eefd773e88d01084283668ae25de29997acf41",
-                "reference": "88eefd773e88d01084283668ae25de29997acf41",
+                "url": "https://api.github.com/repos/phly/http/zipball/eacd0c2a075ec3db365d174b9923320dc0786ac7",
+                "reference": "eacd0c2a075ec3db365d174b9923320dc0786ac7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4.8",
-                "psr/http-message": "~0.2"
+                "psr/http-message": "~0.5.1"
             },
             "require-dev": {
                 "phpunit/phpunit": "3.7.*",
@@ -139,8 +192,7 @@
             },
             "autoload": {
                 "psr-4": {
-                    "Phly\\Http\\": "src/",
-                    "PhlyTest\\Http\\": "test/"
+                    "Phly\\Http\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -159,7 +211,7 @@
             "keywords": [
                 "http"
             ],
-            "time": "2014-10-09 19:09:34"
+            "time": "2014-11-04 15:06:47"
         },
         {
             "name": "phpdocumentor/reflection-docblock",

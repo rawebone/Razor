@@ -1,8 +1,10 @@
 <?php
 
 namespace Razor;
+
+use Razor\Http\NullStream;
 use Razor\Injection\Injector;
-use SebastianBergmann\Exporter\Exception;
+use Razor\Http\Response;
 
 /**
  * EndPoints are essentially the framework, dispatching the request to the
@@ -30,8 +32,8 @@ class EndPoint
 		$this->injector = new Injector();
 		$this->handlers = array();
 
-		$this->error = function () {};
-		$this->invalidMethod = function () {};
+		$this->error = $this->makeDefaultErrorHandler();
+		$this->invalidMethod = $this->makeDefaultInvalidMethodHandler();
 
 		$this->provider($coreServices ?: new CoreServices());
 	}
@@ -106,27 +108,50 @@ class EndPoint
 
 	public function run()
 	{
-		/** @var \Psr\Http\Message\RequestInterface $request */
+		/** @var \Psr\Http\Message\IncomingRequestInterface $request */
 		$request = $this->injector->resolve("req");
 
-		/** @var \Psr\Http\Message\ResponseInterface $response */
+		/** @var \Psr\Http\Message\OutgoingResponseInterface $response */
 		$response = $this->injector->resolve("resp");
 
-		$method = strtolower($request->getMethod());
-
 		try {
-			$handler = (isset($this->handlers[$method]) ? $this->handlers[$method] : $this->invalidMethod);
-			$this->injector->inject($handler);
+            $method = strtolower($request->getMethod());
+
+            if (!isset($this->handlers[$method])) {
+                $this->injector->inject($this->invalidMethod);
+
+            } else {
+                $stack = new MiddlewareStack($this->handlers[$method], $this->injector);
+                $stack();
+            }
 
 		} catch (\Exception $exception) {
 			$this->injector->instance("exception", $exception);
 			$this->injector->inject($this->error);
 		}
 
-		/** @var ResponseSender $sender */
-		$sender = $this->injector->resolve("sender");
-		$sender->send($response);
+		/** @var \Razor\Http\Lifecycle $lifecycle */
+		$lifecycle = $this->injector->resolve("httpLifecycle");
+		$lifecycle->sendResponse($response);
 	}
+
+    protected function makeDefaultErrorHandler()
+    {
+        return function (Response $resp)
+        {
+            $resp->setStatus(500, $resp->getReasonPhraseForCode(500));
+            $resp->setBody(new NullStream());
+        };
+    }
+
+    protected function makeDefaultInvalidMethodHandler()
+    {
+        return function (Response $resp)
+        {
+            $resp->setStatus(405, $resp->getReasonPhraseForCode(405));
+            $resp->setBody(new NullStream());
+        };
+    }
 
 	/**
 	 * @return static

@@ -1,16 +1,13 @@
 <?php
 namespace Razor\Http;
 
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\OutgoingResponseInterface;
 use Psr\Http\Message\StreamableInterface;
 
 /**
- * Response is an implementation of the PSR-7 Response Interface
- * based off of that found in Phly\Http\Response.
- *
- * @link https://github.com/phly/http
+ * Response class 
  */
-class Response extends MessageAbstract implements ResponseInterface
+class Response extends MessageAbstract implements OutgoingResponseInterface
 {
     /**
      * Map of standard HTTP status code/reason phrases
@@ -89,16 +86,25 @@ class Response extends MessageAbstract implements ResponseInterface
     /**
      * @var int
      */
-    protected $status = 200;
+    protected $statusCode = 200;
 
     /**
      * @var null|string
      */
-    protected $reason;
+    protected $reasonPhrase;
 
-    public function __construct(StreamableInterface $stream)
+    /**
+     * Set the HTTP protocol version.
+     *
+     * The version string MUST contain only the HTTP version number (e.g.,
+     * "1.1", "1.0").
+     *
+     * @param string $version HTTP protocol version
+     * @return void
+     */
+    public function setProtocolVersion($version)
     {
-        $this->setBody($stream);
+        $this->protocolVersion = $version;
     }
 
     /**
@@ -111,53 +117,131 @@ class Response extends MessageAbstract implements ResponseInterface
      */
     public function getStatusCode()
     {
-        return $this->status;
+        return $this->statusCode;
     }
 
     /**
-     * Sets the status code of this response.
+     * Sets the status code, and optionally reason phrase,  of this response.
      *
+     * If no Reason-Phrase is specified, implementations MAY choose to default
+     * to the RFC 7231 or IANA recommended reason phrase for the response's
+     * Status-Code.
+     *
+     * @link http://tools.ietf.org/html/rfc7231#section-6
+     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @param integer $code The 3-digit integer result code to set.
+     * @param null|string $reasonPhrase The reason phrase to use with the
+     *     provided status code; if none is provided, implementations MAY
+     *     use the defaults as suggested in the HTTP specification.
+     * @throws \InvalidArgumentException For invalid status code arguments.
      */
-    public function setStatusCode($code)
+    public function setStatus($code, $reasonPhrase = null)
     {
-        if (!is_int($code) || (100 > $code || 599 < $code)) {
-            throw new \InvalidArgumentException("Status code must be between 100 and 599, inclusive");
+        if (!is_int($code) || ($code < 100 || $code > 599)) {
+            throw new \InvalidArgumentException("Status code must be an integer between 100 and 599");
         }
 
-        $this->status = $code;
-        $this->reason = null;
+        $this->statusCode = $code;
+        $this->reasonPhrase = $reasonPhrase;
     }
 
     /**
      * Gets the response Reason-Phrase, a short textual description of the Status-Code.
      *
-     * Because a Reason-Phrase is not a required element in response
+     * Because a Reason-Phrase is not a required element in a response
      * Status-Line, the Reason-Phrase value MAY be null. Implementations MAY
-     * choose to return the default RFC 2616 recommended reason phrase for the
-     * response's Status-Code.
+     * choose to return the default RFC 7231 recommended reason phrase (or those
+     * listed in the IANA HTTP Status Code Registry) for the response's
+     * Status-Code.
      *
+     * @link http://tools.ietf.org/html/rfc7231#section-6
+     * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @return string|null Reason phrase, or null if unknown.
      */
     public function getReasonPhrase()
     {
-        if (!$this->reason && isset($this->phrases[$this->status])) {
-            $this->setReasonPhrase($this->phrases[$this->status]);
+        if (!$this->reasonPhrase && ($phrase = $this->getReasonPhraseForCode($this->statusCode))) {
+            $this->reasonPhrase = $phrase;
         }
 
-        return $this->reason;
+        return $this->reasonPhrase;
     }
 
     /**
-     * Sets the Reason-Phrase of the response.
+     * Returns the reason phrase for the given code.
      *
-     * If no Reason-Phrase is specified, implementations MAY choose to default
-     * to the RFC 2616 recommended reason phrase for the response's Status-Code.
-     *
-     * @param string $phrase The Reason-Phrase to set.
+     * @param int $code
+     * @return null|string
      */
-    public function setReasonPhrase($phrase)
+    public function getReasonPhraseForCode($code)
     {
-        $this->reason = $phrase;
+        return isset($this->phrases[$code]) ? $this->phrases[$code] : null;
+    }
+
+    /**
+     * Sets a header, replacing any existing values of any headers with the
+     * same case-insensitive name.
+     *
+     * The header name is case-insensitive. The header values MUST be a string
+     * or an array of strings.
+     *
+     * @param string $header Header name
+     * @param string|string[] $value Header value(s).
+     * @return void
+     * @throws \InvalidArgumentException for invalid header names or values.
+     */
+    public function setHeader($header, $value)
+    {
+        $this->headers[strtolower($header)] = $this->validateHeaderValue($value);
+    }
+
+    /**
+     * Appends a header value for the specified header.
+     *
+     * Existing values for the specified header will be maintained. The new
+     * value(s) will be appended to the existing list.
+     *
+     * @param string $header Header name to add
+     * @param string|string[] $value Header value(s).
+     * @return void
+     * @throws \InvalidArgumentException for invalid header names or values.
+     */
+    public function addHeader($header, $value)
+    {
+        if (!$this->hasHeader($header)) {
+            $this->setHeader($header, $value);
+            return;
+        }
+
+        $lower = strtolower($header);
+        $this->headers[$lower] = array_merge($this->headers[$lower], $this->validateHeaderValue($value));
+    }
+
+    /**
+     * Remove a specific header by case-insensitive name.
+     *
+     * @param string $header HTTP header to remove
+     * @return void
+     */
+    public function removeHeader($header)
+    {
+        if ($this->hasHeader($header)) {
+            unset($this->headers[strtolower($header)]);
+        }
+    }
+
+    /**
+     * Sets the body of the message.
+     *
+     * The body MUST be a StreamableInterface object. Setting the body to null MUST
+     * remove the existing body.
+     *
+     * @param StreamableInterface $body Body.
+     * @return void
+     * @throws \InvalidArgumentException When the body is not valid.
+     */
+    public function setBody(StreamableInterface $body)
+    {
+        $this->stream = $body;
     }
 }

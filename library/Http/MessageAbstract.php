@@ -5,17 +5,14 @@ use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamableInterface;
 
 /**
- * MessageAbstract class provides an implementation of the PSR-7 MessageInterface
- * based off of that found in Phly\Http\MessageTrait.
- *
- * @link https://github.com/phly/http
+ * MessageAbstract class 
  */
 abstract class MessageAbstract implements MessageInterface
 {
     /**
      * @var StreamableInterface
      */
-    protected $body;
+    protected $stream;
 
     /**
      * @var array
@@ -25,7 +22,7 @@ abstract class MessageAbstract implements MessageInterface
     /**
      * @var string
      */
-    protected $protocol = "1.1";
+    protected $protocolVersion = "1.1";
 
     /**
      * Gets the HTTP protocol version as a string.
@@ -36,7 +33,7 @@ abstract class MessageAbstract implements MessageInterface
      */
     public function getProtocolVersion()
     {
-        return $this->protocol;
+        return $this->protocolVersion;
     }
 
     /**
@@ -46,24 +43,7 @@ abstract class MessageAbstract implements MessageInterface
      */
     public function getBody()
     {
-        return $this->body;
-    }
-
-    /**
-     * Sets the body of the message.
-     *
-     * The body MUST be a StreamableInterface object. Setting the body to null MUST
-     * remove the existing body.
-     *
-     * @param StreamableInterface|null $body Body.
-     *
-     * @return void
-     *
-     * @throws \InvalidArgumentException When the body is not valid.
-     */
-    public function setBody(StreamableInterface $body = null)
-    {
-        $this->body = $body;
+        return $this->stream;
     }
 
     /**
@@ -77,7 +57,15 @@ abstract class MessageAbstract implements MessageInterface
      *         echo $name . ": " . implode(", ", $values);
      *     }
      *
-     * @return array Returns an associative array of the message's headers.
+     *     // Emit headers iteratively:
+     *     foreach ($message->getHeaders() as $name => $values) {
+     *         foreach ($values as $value) {
+     *             header(sprintf('%s: %s', $name, $value), false);
+     *         }
+     *     }
+     *
+     * @return array Returns an associative array of the message's headers. Each
+     *     key MUST be a header name, and each value MUST be an array of strings.
      */
     public function getHeaders()
     {
@@ -88,7 +76,6 @@ abstract class MessageAbstract implements MessageInterface
      * Checks if a header exists by the given case-insensitive name.
      *
      * @param string $header Case-insensitive header name.
-     *
      * @return bool Returns true if any header names match the given header
      *     name using a case-insensitive string comparison. Returns false if
      *     no matching header name is found in the message.
@@ -99,27 +86,31 @@ abstract class MessageAbstract implements MessageInterface
     }
 
     /**
-     * Retrieve a header by the given case-insensitive name as a string.
+     * Retrieve a header by the given case-insensitive name, as a string.
      *
      * This method returns all of the header values of the given
      * case-insensitive header name as a string concatenated together using
      * a comma.
      *
-     * @param string $header Case-insensitive header name.
+     * NOTE: Not all header values may be appropriately represented using
+     * comma concatenation.
      *
+     * @param string $header Case-insensitive header name.
      * @return string
      */
     public function getHeader($header)
     {
-        $headerArray = $this->getHeaderAsArray($header);
-        return ($header ? "" : join(",", $headerArray));
+        if (!$this->hasHeader($header)) {
+            return "";
+        }
+
+        return $this->headers[strtolower($header)];
     }
 
     /**
      * Retrieves a header by the given case-insensitive name as an array of strings.
      *
      * @param string $header Case-insensitive header name.
-     *
      * @return string[]
      */
     public function getHeaderAsArray($header)
@@ -128,144 +119,38 @@ abstract class MessageAbstract implements MessageInterface
             return array();
         }
 
-        $header = $this->headers[strtolower($header)];
-        if (!is_array($header)) {
-            $header = array($header);
-        }
-
-        return $header;
+        $headers = $this->headers[strtolower($header)];
+        return (is_array($headers) ? $headers : array($headers));
     }
 
     /**
-     * Sets a header, replacing any existing values of any headers with the
-     * same case-insensitive name.
+     * Returns a valid header value, or throws an exception.
      *
-     * The header name is case-insensitive. The header values MUST be a string
-     * or an array of strings.
-     *
-     * @param string $header Header name
-     * @param string|string[] $value Header value(s)
-     *
-     * @return void
+     * @param mixed $input
+     * @return array
+     * @throws \InvalidArgumentException
      */
-    public function setHeader($header, $value)
+    protected function validateHeaderValue($input)
     {
-        if (!is_string($header)) {
-            throw new \InvalidArgumentException("Header is not a string");
+        if (is_string($input)) {
+            return array($input);
         }
 
-        if (is_object($value) && method_exists($value, "__toString")) {
-            $value = (string)$value;
-        }
-
-        if (!is_string($value) && !is_array($value)) {
-            throw new \InvalidArgumentException("Invalid header value; must be a string or array of strings");
-        }
-
-        if (is_array($value)) {
-            $valid = true;
-            array_walk($value, function ($value) use (&$valid) {
-                    if (is_object($value) && method_exists($value, "__toString")) {
-                        $value = (string)$value;
-                    }
-
-                    if (!is_string($value)) {
-                        $valid = false;
-                    }
-                });
-
-            if (!$valid) {
-                throw new \InvalidArgumentException("Invalid header value; must be a string or array of strings");
+        $check = function (array $strings)
+        {
+            foreach ($strings as $string) {
+                if (!is_string($string)) {
+                    return false;
+                }
             }
+
+            return true;
+        };
+
+        if (is_array($input) && $check($input)) {
+            return $input;
         }
 
-        if (is_string($value)) {
-            $value = [$value];
-        }
-
-        $this->headers[strtolower($header)] = $value;
-    }
-
-    /**
-     * Sets headers, replacing any headers that have already been set on the message.
-     *
-     * The array keys MUST be a string. The array values must be either a
-     * string or an array of strings.
-     *
-     * @param array $headers Headers to set.
-     *
-     * @return void
-     */
-    public function setHeaders(array $headers)
-    {
-        $this->headers = array();
-        foreach ($this->headers as $header => $value) {
-            $this->setHeader($header, $value);
-        }
-    }
-
-    /**
-     * Appends a header value for the specified header.
-     *
-     * Existing values for the specified header will be maintained. The new
-     * value will be appended to the existing list.
-     *
-     * @param string $header Header name to add
-     * @param string $value Value of the header
-     *
-     * @return void
-     */
-    public function addHeader($header, $value)
-    {
-        $header = strtolower($header);
-
-        if (is_object($value) && method_exists($value, "__toString")) {
-            $value = (string)$value;
-        }
-
-        if (!is_string($value)) {
-            throw new \InvalidArgumentException("Invalid header value; must be a string");
-        }
-
-        if (!$this->hasHeader($header)) {
-            $this->setHeader($header, $value);
-            return;
-        }
-
-        $this->headers[$header][] = $value;
-    }
-
-    /**
-     * Merges in an associative array of headers.
-     *
-     * Each array key MUST be a string representing the case-insensitive name
-     * of a header. Each value MUST be either a string or an array of strings.
-     * For each value, the value is appended to any existing header of the same
-     * name, or, if a header does not already exist by the given name, then the
-     * header is added.
-     *
-     * @param array $headers Associative array of headers to add to the message
-     *
-     * @return void
-     */
-    public function addHeaders(array $headers)
-    {
-        foreach ($headers as $header => $value) {
-            $this->addHeader($header, $value);
-        }
-    }
-
-    /**
-     * Remove a specific header by case-insensitive name.
-     *
-     * @param string $header HTTP header to remove
-     *
-     * @return void
-     */
-    public function removeHeader($header)
-    {
-        if ($this->hasHeader($header)) {
-            unset($this->headers[strtolower($header)]);
-        }
+        throw new \InvalidArgumentException("Passed header value is invalid; must be a string or an array of strings");
     }
 }

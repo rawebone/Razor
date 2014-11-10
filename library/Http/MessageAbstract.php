@@ -104,7 +104,7 @@ abstract class MessageAbstract implements MessageInterface
             return "";
         }
 
-        return $this->headers[strtolower($header)];
+        return join(",", $this->headers[strtolower($header)]);
     }
 
     /**

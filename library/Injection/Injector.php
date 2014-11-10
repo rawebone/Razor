@@ -196,7 +196,9 @@ class Injector
 			throw new \InvalidArgumentException("\$fn is expected to be a callable");
 		}
 
-		if (is_array($fn)) {
+		if (is_object($fn) && method_exists($fn, "__invoke")) {
+			$reflection = new \ReflectionMethod($fn, "__invoke");
+		} else if (is_array($fn)) {
 			$reflection = new \ReflectionMethod($fn[0], $fn[1]);
 		} else {
 			$reflection = new \ReflectionFunction($fn);

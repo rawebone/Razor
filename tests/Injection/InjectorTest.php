@@ -32,6 +32,14 @@ class InjectorTest extends ProphecyTestCase
 		$this->assertEquals(array("a", "b"), $required);
 	}
 
+	function testRequiresForInvoke()
+	{
+		$injector = new Injector();
+		$required = $injector->requires(new TestRequiresForInvokeStub());
+
+		$this->assertEquals(array("a", "b"), $required);
+	}
+
 	function testRegisterServiceAndDefined()
 	{
 		$injector = new Injector();
@@ -143,5 +151,13 @@ class TestRequiresForMethodStub
 {
 	public function test($a, $b)
 	{
+	}
+}
+
+class TestRequiresForInvokeStub
+{
+	function __invoke($a, $b)
+	{
+
 	}
 }
